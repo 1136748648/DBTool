@@ -1,7 +1,9 @@
 ﻿using DBLogic;
+using DBLogic.Logic;
 using DBLogic.Model;
 using DBLogic.Util;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
 
@@ -124,99 +126,83 @@ namespace FDBIntercross
         private void cbo_db_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataRowView model = (DataRowView)cbo_db.SelectedItem;
-            var dbTable = DBInfo.GetTablesInfo(model[0].ToString());
-            dgv_Tables.DataSource = dbTable;
-            DataTable dt = (DataTable)dgv_Column.DataSource;
-            if (dt != null)
+            if (tcl_tabList.SelectedTab.Name == tbp_Create.Name)
             {
-                dt.Rows.Clear();
-                dgv_Column.DataSource = dt;
-                //dgv_Column.DataSource = null;
+                DBInfoModel dbInfo = (DBInfoModel)cbo_dbset.SelectedItem;
+                dbInfo.def_DB = model[0].ToString();
+                DBInfo.SetConnectionString(dbInfo);
+                var dbTable = DBInfo.GetTablesInfo(model[0].ToString());
+                dgv_Tables.DataSource = dbTable;
+                DataTable dt = (DataTable)dgv_Column.DataSource;
+                if (dt != null)
+                {
+                    dt.Rows.Clear();
+                    dgv_Column.DataSource = dt;
+                    //dgv_Column.DataSource = null;
+                }
             }
         }
 
         private string dgv_Tables_SelectName = string.Empty;
         private void dgv_Tables_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var name = dgv_Tables.Rows[e.RowIndex].Cells[0].Value.ToString().Trim();
+            if (e.RowIndex < 0) return;
+            var flag = dgv_Tables.Rows[e.RowIndex].Cells[0].Value;
+            dgv_Tables.Rows[e.RowIndex].Cells[0].Value = flag != null && flag.ConvertBoolean() ? false : true;
+            var name = dgv_Tables.Rows[e.RowIndex].Cells[1].Value.ToString().Trim();
             if (!string.IsNullOrEmpty(name))
             {
                 if (dgv_Tables_SelectName.Equals(name)) return;
+                DataTable dt = (DataTable)dgv_Column.DataSource;
+                if (dt != null)
+                {
+                    dt.Rows.Clear();
+                    dgv_Column.DataSource = dt;
+                }
                 dgv_Tables_SelectName = name;
-                dgv_Column.DataSource = GetTableInfo(name);
+                dgv_Column.DataSource = DBInfo.GetTableInfo_DT(name);
             }
         }
-        private DataTable GetTableInfo(string name)
+
+        private void btn_Path_Click(object sender, EventArgs e)
         {
-            var ds = DBInfo.GetTableInfo(name);
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("COLUMN_NAME", typeof(string));
-            dataTable.Columns.Add("DATA_TYPE", typeof(string));
-            dataTable.Columns.Add("IS_NULLABLE", typeof(string));
-            dataTable.Columns.Add("COLUMN_DEFAULT", typeof(string));
-            dataTable.Columns.Add("IsKey", typeof(string));
-            if (ds != null && ds.Tables.Count > 0)
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.Description = "请选择保存的文件夹";
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                foreach (DataRow item in ds.Tables[0].Rows)
+                if (string.IsNullOrEmpty(dialog.SelectedPath))
                 {
-                    string DATA_TYPE = item["DATA_TYPE"].ToString().Trim();
-                    string CHARACTER_MAXIMUM_LENGTH = item["CHARACTER_MAXIMUM_LENGTH"].ToString().Trim();
-                    string NUMERIC_PRECISION = item["NUMERIC_PRECISION"].ToString().Trim();
-                    string NUMERIC_SCALE = item["NUMERIC_SCALE"].ToString().Trim();
-                    string COLUMN_DEFAULT = item["COLUMN_DEFAULT"].ToString().Trim();
-                    if (!string.IsNullOrEmpty(CHARACTER_MAXIMUM_LENGTH))
-                    {
-                        DATA_TYPE = $"{DATA_TYPE}({CHARACTER_MAXIMUM_LENGTH})";
-                    }
-                    else if (!string.IsNullOrEmpty(NUMERIC_PRECISION) && !string.IsNullOrEmpty(NUMERIC_SCALE))
-                    {
-                        DATA_TYPE = $"{DATA_TYPE}({NUMERIC_PRECISION},{NUMERIC_SCALE})";
-                    }
-                    COLUMN_DEFAULT = COLUMN_DEFAULT.Replace("(", "").Replace(")", "");
-                    string isKey = "";
-                    if (ds.Tables[1].Rows.Count > 0)
-                    {
-                        foreach (DataRow kdr in ds.Tables[1].Rows)
-                        {
-                            if (kdr["name"].ToString().Trim().Equals(item["COLUMN_NAME"].ToString()))
-                            {
-                                isKey = "YES";
-                            }
-                        }
-                    }
-                    dataTable.Rows.Add(item["COLUMN_NAME"].ToString(), DATA_TYPE, item["IS_NULLABLE"].ToString(), COLUMN_DEFAULT, isKey);
+                    MessageBox.Show(this, "文件夹路径不能为空", "提示");
+                    return;
                 }
+                txt_Path.Text = dialog.SelectedPath;
             }
-            return dataTable;
         }
 
-        private void dgv_Tables_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        private void btn_Generate_Click(object sender, EventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            try
             {
-                if (e.RowIndex >= 0)
+                List<string> list = new List<string>();
+                foreach (DataGridViewRow item in dgv_Tables.Rows)
                 {
-                    //若行已是选中状态就不再进行设置
-                    //if (dataGridView1.Rows[e.RowIndex].Selected == false)
-                    //{
-                    //    dataGridView1.ClearSelection();
-                    //    dataGridView1.Rows[e.RowIndex].Selected = true;
-                    //}
-                    ////只选中一行时设置活动单元格
-                    //if (dataGridView1.SelectedRows.Count == 1)
-                    //{
-                    //    dataGridView1.CurrentCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                    //}
-                    //弹出操作菜单
-                    cms_Tables.Show(MousePosition.X, MousePosition.Y);
+                    if (item.Cells[0].Value.ConvertBoolean() == true)
+                    {
+                        list.Add(item.Cells[1].Value.ConvertString());
+                    }
                 }
+                string path = txt_Path.Text;
+                if (string.IsNullOrEmpty(path))
+                {
+                    MessageBox.Show("路径不能为空");
+                }
+                CreateTableLogic.CreateTableSql(list, path);
+                MessageBox.Show("生成成功");
             }
-
-        }
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
+            catch (Exception ex)
+            {
+                MessageBox.Show("生成失败");
+            }
         }
     }
 }

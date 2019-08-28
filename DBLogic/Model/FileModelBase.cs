@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using DBLogic.Util;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Web;
 
-namespace DBLogic.Util
+namespace DBLogic.Model
 {
     public class FileModelBase<T> where T : class
     {
@@ -86,15 +86,11 @@ namespace DBLogic.Util
         public static string basePath { get; set; } = System.Environment.CurrentDirectory + "\\DBCache\\";
         public static void Load()
         {
-            var path = Path.Combine(basePath, "dbTool.cache");
-            if (File.Exists(path))
+            var jsonData = FileUtil.ReadFile(basePath, "dbTool.cache");
+            if (!string.IsNullOrEmpty(jsonData))
             {
-                using (StreamReader fs = new StreamReader(Path.Combine(basePath, "dbTool.cache"), Encoding.UTF8))
-                {
-                    var jsonData = fs.ReadToEnd();
-                    jsonData = HttpUtility.UrlDecode(jsonData);
-                    F_DbDic = JsonConvert.DeserializeObject<Dictionary<string, List<Object>>>(jsonData);
-                }
+                //jsonData = HttpUtility.HtmlDecode(jsonData);
+                F_DbDic = JsonConvert.DeserializeObject<Dictionary<string, List<Object>>>(jsonData);
             }
         }
         public static void Save()
@@ -104,12 +100,8 @@ namespace DBLogic.Util
                 Directory.CreateDirectory(basePath);
             }
             string jsonData = JsonConvert.SerializeObject(F_DbDic);
-            jsonData = HttpUtility.UrlEncode(jsonData);
-            using (FileStream fs = new FileStream(Path.Combine(basePath, "dbTool.cache"), FileMode.OpenOrCreate))
-            {
-                byte[] data = Encoding.UTF8.GetBytes(jsonData);
-                fs.Write(data, 0, data.Length);
-            }
+            //jsonData = HttpUtility.HtmlEncode(jsonData);
+            FileUtil.SaveFile(basePath, "dbTool.cache", jsonData);
         }
     }
 }

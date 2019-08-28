@@ -1,6 +1,4 @@
-﻿using DBLogic.Util;
-
-namespace DBLogic.Model
+﻿namespace DBLogic.Model
 {
     public class DBInfoModel : FileModelBase<DBInfoModel>
     {
