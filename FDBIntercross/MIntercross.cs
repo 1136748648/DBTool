@@ -2,6 +2,7 @@
 using DBLogic.Logic;
 using DBLogic.Model;
 using DBLogic.Util;
+using FDBIntercross.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,8 +21,11 @@ namespace FDBIntercross
         private void LoadDbConfig()
         {
             CreateToolStripMenuItem();
-            ComboBoxDataSource(cbo_dbset, DBInfoModel.F_DBInfo, "ip");
+            cbo_dbset.ValueMember = "ip";
+            cbo_dbset.DisplayMember = "ip";
+            cbo_dbset.DataSource = DBInfoModel.F_DBInfo;
         }
+
         #region Tool栏db配置加载
         private void CreateToolStripMenuItem()
         {
@@ -101,12 +105,15 @@ namespace FDBIntercross
             try
             {
                 DBInfoModel model = (DBInfoModel)cbo_dbset.SelectedItem;
-                cbo_db.Text = model.def_DB;
+                string def_DB = model.def_DB;
                 DBInfo.SetConnectionString(model);
                 var dbList = DBInfo.GetDBsInfo();
                 if (dbList != null)
                 {
-                    ComboBoxDataSource(cbo_db, dbList, "name");
+                    cbo_db.ValueMember = "name";
+                    cbo_db.DisplayMember = "name";
+                    cbo_db.DataSource = dbList;
+                    cbo_db.SelectedValue = def_DB;
                 }
                 else
                 {
@@ -125,15 +132,19 @@ namespace FDBIntercross
         {
             DataRowView model = (DataRowView)cbo_db.SelectedItem;
             DBInfoModel dbInfo = (DBInfoModel)cbo_dbset.SelectedItem;
-            dbInfo.def_DB = model[0].ToString();
-            DBInfo.SetConnectionString(dbInfo);
-            if (tcl_tabList.SelectedTab.Name == tbp_Create.Name)
+            if (model != null)
             {
-                LoadCreate(dbInfo);
-            }
-            else
-            {
-                LoadDataJb(dbInfo);
+                dbInfo.def_DB = model[0].ToString();
+                dbInfo.AddOrUpdate();
+                DBInfo.SetConnectionString(dbInfo);
+                if (tcl_tabList.SelectedTab.Name == tbp_Create.Name)
+                {
+                    LoadCreate(dbInfo);
+                }
+                else
+                {
+                    LoadDataJb(dbInfo);
+                }
             }
         }
         /// <summary>
@@ -175,7 +186,7 @@ namespace FDBIntercross
                 dt.Rows.Clear();
                 dgv_Column.DataSource = dt;
             }
-            txt_CPath.Text = SavePathModel.F_DBInfo.Path;
+            txt_Path.Text = SavePathModel.F_DBInfo.Path;
         }
         private string dgv_Tables_SelectName = string.Empty;
         private void dgv_Tables_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -233,9 +244,11 @@ namespace FDBIntercross
         {
             var dbTable = DBInfo.GetTablesInfo(model.def_DB);
             ComboBoxDataSource(cbx_TableList, dbTable, "name", isBind: true);
-            txt_CPath.Text = SavePathModel.F_DBInfo.Path;
+            cbx_ConfigDataSource();
+            pl_CbConfigClear();
         }
-        private void StructureControl()
+        private object tempData = null;
+        private Panel StructureControl()
         {
             var tag = pl_CbConfig.Tag.ConvertInt32();
             pl_CbConfig.Tag = tag + 1;
@@ -244,24 +257,20 @@ namespace FDBIntercross
             pl.Location = new System.Drawing.Point(3, y);
             pl.Name = tag.ToString();
             pl.Size = new System.Drawing.Size(580, 33);
-            ComboBox table = new ComboBox();
-            table.FormattingEnabled = true;
+            DropDownSearch table = new DropDownSearch();
             table.Location = new System.Drawing.Point(30, 5);
-            table.Name = "table_" + tag.ToString();
+            table.Name = "table";
             table.Size = new System.Drawing.Size(200, 20);
             table.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
-            ComboBox cbzd = new ComboBox();
-            cbzd.FormattingEnabled = true;
+            DropDownSearch cbzd = new DropDownSearch();
             cbzd.Location = new System.Drawing.Point(259, 5);
-            cbzd.Name = "cbzd_" + tag.ToString();
+            cbzd.Name = "cbzd";
             cbzd.Size = new System.Drawing.Size(80, 20);
-            ComboBox zbzd = new ComboBox();
-            zbzd.FormattingEnabled = true;
+            DropDownSearch zbzd = new DropDownSearch();
             zbzd.Location = new System.Drawing.Point(372, 5);
-            zbzd.Name = "zbzd_" + tag.ToString();
+            zbzd.Name = "zbzd";
             zbzd.Size = new System.Drawing.Size(80, 20);
             zbzd.Text = cbx_TablePk.Text;
-            ComboBoxDataSource(zbzd, cbx_TablePk.DataSource, "COLUMN_NAME", isBind: true);
             Button btn = new Button();
             btn.Location = new System.Drawing.Point(480, 5);
             btn.Name = "btn_" + tag.ToString();
@@ -271,23 +280,29 @@ namespace FDBIntercross
             btn.Click += new System.EventHandler(this.DeleteCbPz);
             pl.Controls.AddRange(new Control[] { table, cbzd, zbzd, btn });
             pl_CbConfig.Controls.Add(pl);
+            if (tempData == null)
+            {
+                tempData = (cbx_TableList.DataSource as DataTable).Select($" name<>'{cbx_TableList.Text.ConvertString()}'").CopyToDataTable();
+            }
+            ComboBoxDataSource(table, tempData, "name", isBind: true);
+            ComboBoxDataSource(cbzd, DBInfo.GetTableInfo_DT(table.Text.ConvertString()), "COLUMN_NAME", isBind: true);
+            ComboBoxDataSource(zbzd, cbx_TablePk.DataSource, "COLUMN_NAME", isBind: true);
+            return pl;
         }
         private void SelectedIndexChanged(object sender, EventArgs e)
         {
-            var cbx = (ComboBox)sender;
+            var cbx = (DropDownSearch)sender;
             if (!string.IsNullOrEmpty(cbx.Text.ConvertString()))
             {
                 var data = DBInfo.GetTableInfo_DT(cbx.Text.ConvertString());
-                ComboBox cbc_kz = null;
+                DropDownSearch cbc_kz = null;
                 if (cbx.Name == cbx_TableList.Name)
                 {
                     cbc_kz = cbx_TablePk;
                 }
                 else
                 {
-                    foreach (var item in pl_CbConfig.Controls)
-                    {
-                    }
+                    cbc_kz = cbx.Parent.Controls["cbzd"] as DropDownSearch;
                 }
                 if (cbc_kz != null)
                 {
@@ -301,15 +316,40 @@ namespace FDBIntercross
                         }
                     }
                 }
+                if (cbx.Name == cbx_TableList.Name)
+                {
+                    tempData = (cbx_TableList.Tag as DataTable).Select($" name<>'{cbx_TableList.Text.ConvertString()}'").CopyToDataTable();
+                    foreach (var item in pl_CbConfig.Controls)
+                    {
+                        if (item is Panel)
+                        {
+                            var _temp = (item as Panel).Controls["zbzd"] as DropDownSearch;
+                            ComboBoxDataSource(_temp, data, "COLUMN_NAME", isBind: true);
+                            _temp.Text = cbx.Text;
+                            var _temp2 = (item as Panel).Controls["table"] as DropDownSearch;
+                            _temp2.DataSource = tempData;
+                        }
+                    }
+                }
             }
         }
 
+        private void pl_CbConfigClear()
+        {
+            foreach (Control item in pl_CbConfig.Controls)
+            {
+                if (item is Panel)
+                {
+                    pl_CbConfig.Controls.Remove(item);
+                }
+            }
+        }
         private void DeleteCbPz(object sender, EventArgs e)
         {
             this.pl_CbConfig.SuspendLayout();
             Button btn = (Button)sender;
-            var tag = btn.Name.Split('_')[1].ConvertInt32();
-            pl_CbConfig.Controls.RemoveByKey(tag.ConvertString());
+            var tag = btn.Parent.Name.ConvertInt32();
+            pl_CbConfig.Controls.RemoveByKey(btn.Parent.Name);
             foreach (var item in pl_CbConfig.Controls)
             {
                 if (item is Panel)
@@ -332,19 +372,100 @@ namespace FDBIntercross
         {
             StructureControl();
         }
+        private void btn_GenerateData_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataConfigModel model = cbx_Config.SelectedItem as DataConfigModel;
+                model.CbInfo = new List<DataConfig_CbModel>();
+                model.Path = txt_CPath.Text.ConvertString();
+                model.IsPcZzl = ckb_IsPcZzl.Checked;
+                model.ZTableName = cbx_TableList.Text.ConvertString();
+                model.ZTablePk = cbx_TablePk.Text.ConvertString();
+                model.Sql = txt_DbSql.Text.ConvertString();
+                if (!ckb_IsName.Checked)
+                {
+                    SetName sName = new SetName();
+                    sName.TName = model.Name == "--新增配置--" ? "" : model.Name;
+                    if (sName.ShowDialog() == DialogResult.OK)
+                    {
+                        model.Name = sName.TName.ConvertString();
+                    }
+                    sName.Activate();
+                }
+                else
+                {
+                    model.Name = model.ZTableName;
+                }
+                foreach (var item in pl_CbConfig.Controls)
+                {
+                    if (item is Panel)
+                    {
+                        var pl = item as Panel;
+                        model.CbInfo.Add(new DataConfig_CbModel()
+                        {
+                            TableName = (pl.Controls["table"] as DropDownSearch).Text.ConvertString(),
+                            CBZD = (pl.Controls["cbzd"] as DropDownSearch).Text.ConvertString(),
+                            ZBZD = (pl.Controls["zbzd"] as DropDownSearch).Text.ConvertString()
+                        });
+                    }
+                }
+                GenerateDataLogic.GenerateData(model);
+                model.AddOrUpdate();
+                string tempText = cbx_Config.Text.ConvertString();
+                cbx_ConfigDataSource();
+                pl_CbConfigClear();
+                cbx_Config.SelectedValue = tempText;
+                MessageBox.Show("生成成功");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("生成失败");
+            }
+        }
+        private void cbx_ConfigDataSource()
+        {
+            var list = DataConfigModel.F_DBInfo;
+            list.Insert(0, new DataConfigModel() { Name = "--新增配置--" });
+            cbx_Config.ValueMember = "Name";
+            cbx_Config.DisplayMember = "Name";
+            cbx_Config.DataSource = list;
+        }
+        private void cbx_Config_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var model = cbx_Config.SelectedItem as DataConfigModel;
+            txt_CPath.Text = model.Path;
+            ckb_IsPcZzl.Checked = model.IsPcZzl;
+            cbx_TableList.Text = model.ZTableName;
+            cbx_TablePk.Text = model.ZTablePk;
+            txt_DbSql.Text = model.Sql;
+            if (model.CbInfo != null && model.CbInfo.Count > 0)
+            {
+                pl_CbConfigClear();
+                pl_CbConfig.Tag = 0;
+                foreach (var item in model.CbInfo)
+                {
+                    var pl = StructureControl();
+                    (pl.Controls["table"] as DropDownSearch).Text = item.TableName;
+                    (pl.Controls["cbzd"] as DropDownSearch).Text = item.CBZD;
+                    (pl.Controls["zbzd"] as DropDownSearch).Text = item.ZBZD;
+                }
+            }
+        }
         #endregion 数据脚本
 
         #region 构建搜索类型下拉框
-        public void ComboBoxDataSource(ComboBox cbx, object data, string ValueMember, string DisplayMember = "", bool isBind = false)
+        public void ComboBoxDataSource(DropDownSearch cbx, object data, string ValueMember, string DisplayMember = "", bool isBind = false)
         {
             if (cbx != null)
             {
                 cbx.ValueMember = ValueMember;
                 cbx.DisplayMember = string.IsNullOrEmpty(DisplayMember) ? ValueMember : DisplayMember;
-                cbx.DataSource = data;
                 cbx.Tag = data;
+                cbx.DataSource = data;
                 if (isBind)
                 {
+                    cbx.KeyUp -= new KeyEventHandler(cbo_db_KeyUp);
                     cbx.KeyUp += new KeyEventHandler(cbo_db_KeyUp);
                 }
             }
@@ -352,21 +473,26 @@ namespace FDBIntercross
 
         private void cbo_db_KeyUp(object sender, KeyEventArgs e)
         {
-            var cbx = (ComboBox)sender;
-            if (!string.IsNullOrEmpty(cbx.Text))
+            var cbx = (DropDownSearch)sender;
+            var text = cbx.Text.ConvertString();
+            if (!string.IsNullOrEmpty(text))
             {
                 string name = cbx.ValueMember;
                 var dt = (DataTable)cbx.Tag;
+                var temp = (cbx.DataSource as DataTable);
                 var dr = dt.Select($" {name} like '%{cbx.Text.ConvertString()}%'");
                 if (dr.Length > 0)
                 {
+                    //temp = dr.CopyToDataTable();
                     cbx.DataSource = dr.CopyToDataTable();
                 }
                 else
                 {
+                    //temp = dt.Clone();
                     cbx.DataSource = dt.Clone();
                 }
                 cbx.DroppedDown = true;
+                // cbx.Text = text;
             }
             else
             {
@@ -379,5 +505,6 @@ namespace FDBIntercross
         {
             cbo_db_SelectedIndexChanged(null, null);
         }
+
     }
 }

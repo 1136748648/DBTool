@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsddb_DBSet = new System.Windows.Forms.ToolStripDropDownButton();
             this.ts_Add = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,8 +55,7 @@
             this.IS_NULLABLE = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.IsKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tbp_Data = new System.Windows.Forms.TabPage();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btn_GenerateData = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.txt_CPath = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -71,11 +70,13 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txt_DbSql = new System.Windows.Forms.TextBox();
-            this.cbx_TablePk = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.cbx_TableList = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.ckb_IsPcZzl = new System.Windows.Forms.CheckBox();
+            this.ckb_IsName = new System.Windows.Forms.CheckBox();
+            this.cbx_TablePk = new FDBIntercross.UserControls.DropDownSearch();
+            this.cbx_TableList = new FDBIntercross.UserControls.DropDownSearch();
             this.toolStrip1.SuspendLayout();
             this.tcl_tabList.SuspendLayout();
             this.tbp_Create.SuspendLayout();
@@ -249,13 +250,13 @@
             this.dgv_Tables.AllowUserToAddRows = false;
             this.dgv_Tables.AllowUserToDeleteRows = false;
             this.dgv_Tables.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.dgv_Tables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.dgv_Tables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_Tables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_Tables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsSelection,
@@ -365,8 +366,9 @@
             // 
             // tbp_Data
             // 
-            this.tbp_Data.Controls.Add(this.button3);
-            this.tbp_Data.Controls.Add(this.button2);
+            this.tbp_Data.Controls.Add(this.ckb_IsName);
+            this.tbp_Data.Controls.Add(this.ckb_IsPcZzl);
+            this.tbp_Data.Controls.Add(this.btn_GenerateData);
             this.tbp_Data.Controls.Add(this.button1);
             this.tbp_Data.Controls.Add(this.txt_CPath);
             this.tbp_Data.Controls.Add(this.label5);
@@ -382,28 +384,20 @@
             this.tbp_Data.Text = "数据脚本";
             this.tbp_Data.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btn_GenerateData
             // 
-            this.button3.Location = new System.Drawing.Point(879, 22);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 8;
-            this.button3.Text = "保存当前配置";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(780, 22);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "生成脚本";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btn_GenerateData.Location = new System.Drawing.Point(872, 21);
+            this.btn_GenerateData.Name = "btn_GenerateData";
+            this.btn_GenerateData.Size = new System.Drawing.Size(90, 23);
+            this.btn_GenerateData.TabIndex = 7;
+            this.btn_GenerateData.Text = "生成保存脚本";
+            this.btn_GenerateData.UseVisualStyleBackColor = true;
+            this.btn_GenerateData.Click += new System.EventHandler(this.btn_GenerateData_Click);
             // 
             // button1
             // 
             this.button1.AccessibleName = "";
-            this.button1.Location = new System.Drawing.Point(679, 22);
+            this.button1.Location = new System.Drawing.Point(667, 21);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 6;
@@ -414,7 +408,7 @@
             // 
             // txt_CPath
             // 
-            this.txt_CPath.Location = new System.Drawing.Point(290, 23);
+            this.txt_CPath.Location = new System.Drawing.Point(289, 22);
             this.txt_CPath.Name = "txt_CPath";
             this.txt_CPath.Size = new System.Drawing.Size(368, 21);
             this.txt_CPath.TabIndex = 5;
@@ -422,7 +416,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(225, 26);
+            this.label5.Location = new System.Drawing.Point(220, 26);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(59, 12);
             this.label5.TabIndex = 4;
@@ -432,10 +426,11 @@
             // 
             this.cbx_Config.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbx_Config.FormattingEnabled = true;
-            this.cbx_Config.Location = new System.Drawing.Point(67, 23);
+            this.cbx_Config.Location = new System.Drawing.Point(71, 22);
             this.cbx_Config.Name = "cbx_Config";
             this.cbx_Config.Size = new System.Drawing.Size(139, 20);
             this.cbx_Config.TabIndex = 3;
+            this.cbx_Config.SelectedIndexChanged += new System.EventHandler(this.cbx_Config_SelectedIndexChanged);
             // 
             // label4
             // 
@@ -539,14 +534,6 @@
             this.txt_DbSql.Size = new System.Drawing.Size(329, 204);
             this.txt_DbSql.TabIndex = 4;
             // 
-            // cbx_TablePk
-            // 
-            this.cbx_TablePk.FormattingEnabled = true;
-            this.cbx_TablePk.Location = new System.Drawing.Point(85, 76);
-            this.cbx_TablePk.Name = "cbx_TablePk";
-            this.cbx_TablePk.Size = new System.Drawing.Size(258, 20);
-            this.cbx_TablePk.TabIndex = 3;
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -556,15 +543,6 @@
             this.label7.TabIndex = 2;
             this.label7.Text = "主键:";
             // 
-            // cbx_TableList
-            // 
-            this.cbx_TableList.FormattingEnabled = true;
-            this.cbx_TableList.Location = new System.Drawing.Point(85, 36);
-            this.cbx_TableList.Name = "cbx_TableList";
-            this.cbx_TableList.Size = new System.Drawing.Size(258, 20);
-            this.cbx_TableList.TabIndex = 1;
-            this.cbx_TableList.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -573,6 +551,53 @@
             this.label6.Size = new System.Drawing.Size(35, 12);
             this.label6.TabIndex = 0;
             this.label6.Text = "表名:";
+            // 
+            // ckb_IsPcZzl
+            // 
+            this.ckb_IsPcZzl.AutoSize = true;
+            this.ckb_IsPcZzl.Checked = true;
+            this.ckb_IsPcZzl.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckb_IsPcZzl.Location = new System.Drawing.Point(750, 12);
+            this.ckb_IsPcZzl.Name = "ckb_IsPcZzl";
+            this.ckb_IsPcZzl.Size = new System.Drawing.Size(108, 16);
+            this.ckb_IsPcZzl.TabIndex = 8;
+            this.ckb_IsPcZzl.Text = "是否排除自增列";
+            this.ckb_IsPcZzl.UseVisualStyleBackColor = true;
+            // 
+            // ckb_IsName
+            // 
+            this.ckb_IsName.AutoSize = true;
+            this.ckb_IsName.Checked = true;
+            this.ckb_IsName.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckb_IsName.Location = new System.Drawing.Point(750, 40);
+            this.ckb_IsName.Name = "ckb_IsName";
+            this.ckb_IsName.Size = new System.Drawing.Size(120, 16);
+            this.ckb_IsName.TabIndex = 9;
+            this.ckb_IsName.Text = "是否表名为文件名";
+            this.ckb_IsName.UseVisualStyleBackColor = true;
+            // 
+            // cbx_TablePk
+            // 
+            this.cbx_TablePk.DataSource = null;
+            this.cbx_TablePk.DisplayMember = "";
+            this.cbx_TablePk.DroppedDown = false;
+            this.cbx_TablePk.Location = new System.Drawing.Point(85, 76);
+            this.cbx_TablePk.Name = "cbx_TablePk";
+            this.cbx_TablePk.Size = new System.Drawing.Size(258, 20);
+            this.cbx_TablePk.TabIndex = 3;
+            this.cbx_TablePk.ValueMember = "";
+            // 
+            // cbx_TableList
+            // 
+            this.cbx_TableList.DataSource = null;
+            this.cbx_TableList.DisplayMember = "";
+            this.cbx_TableList.DroppedDown = false;
+            this.cbx_TableList.Location = new System.Drawing.Point(85, 36);
+            this.cbx_TableList.Name = "cbx_TableList";
+            this.cbx_TableList.Size = new System.Drawing.Size(258, 20);
+            this.cbx_TableList.TabIndex = 1;
+            this.cbx_TableList.ValueMember = "";
+            this.cbx_TableList.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // MIntercross
             // 
@@ -645,24 +670,25 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn 表名;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btn_GenerateData;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox txt_CPath;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cbx_Config;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txt_DbSql;
-        private System.Windows.Forms.ComboBox cbx_TablePk;
+        private UserControls.DropDownSearch cbx_TablePk;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ComboBox cbx_TableList;
+        private UserControls.DropDownSearch cbx_TableList;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btn_AddConfig;
         private System.Windows.Forms.Panel pl_CbConfig;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox ckb_IsPcZzl;
+        private System.Windows.Forms.CheckBox ckb_IsName;
     }
 }
 

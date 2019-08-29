@@ -70,7 +70,7 @@ namespace DBLogic.Model
         {
             if (!FileModelBase.F_DbDic.ContainsKey(ClassName))
             {
-                FileModelBase.F_DbDic.Add(ClassName, new T());
+                FileModelBase.F_DbDic.Add(ClassName, new JArray());
             }
             if (IsList)
             {

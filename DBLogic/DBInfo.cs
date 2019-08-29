@@ -32,7 +32,7 @@ namespace DBLogic
                         c.NUMERIC_SCALE,
                         COLUMNPROPERTY(OBJECT_ID('{tableName}'), COLUMN_NAME, 'IsIdentity') as IsIdentity
                 FROM    [INFORMATION_SCHEMA].[COLUMNS] c
-                WHERE   TABLE_NAME = '{tableName}';
+                WHERE   TABLE_NAME = '{tableName}' AND c.DATA_TYPE<>'timestamp' ;
                 SELECT name
                 FROM   syscolumns
                 WHERE  id = OBJECT_ID('{tableName}') 
