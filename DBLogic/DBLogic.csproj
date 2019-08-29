@@ -48,6 +48,7 @@
     <Compile Include="DBInfo.cs" />
     <Compile Include="Logic\CreateTableLogic.cs" />
     <Compile Include="Model\DBInfoModel.cs" />
+    <Compile Include="Model\SavePathModel.cs" />
     <Compile Include="Model\UpdateConfigModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\FileModelBase.cs" />
