@@ -13,10 +13,9 @@ namespace DBLogic.Util
             {
                 Directory.CreateDirectory(path);
             }
-            using (FileStream fs = new FileStream(Path.Combine(path, fileName), FileMode.OpenOrCreate))
+            using (StreamWriter fs = new StreamWriter(Path.Combine(path, fileName), false, Encoding.UTF8))
             {
-                byte[] data = Encoding.UTF8.GetBytes(str);
-                fs.Write(data, 0, data.Length);
+                fs.Write(str);
             }
         }
         public static string ReadFile(string path, string fileName)
