@@ -313,6 +313,14 @@ namespace FDBIntercross
                 this.dgv_Tables.CurrentRow.Selected = false;
             }
         }
+
+        private void dgv_Tables_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+        {
+            if (e.Row.Tag.ConvertString().Equals("All"))
+            {
+                e.Row.Selected = false;
+            }
+        }
         #endregion 建表
 
         #region 数据脚本
@@ -580,14 +588,6 @@ namespace FDBIntercross
         private void tcl_tabList_SelectedIndexChanged(object sender, EventArgs e)
         {
             cbo_db_SelectedIndexChanged(null, null);
-        }
-
-        private void dgv_Tables_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
-        {
-            if (e.Row.Tag.ConvertString().Equals("All"))
-            {
-                e.Row.Selected = false;
-            }
         }
     }
 }
