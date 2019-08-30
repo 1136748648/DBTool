@@ -45,8 +45,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgv_Tables = new System.Windows.Forms.DataGridView();
-            this.IsSelection = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.表名 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgv_Column = new System.Windows.Forms.DataGridView();
             this.COLUMN_NAME = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DATA_TYPE = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,6 +53,8 @@
             this.IS_NULLABLE = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.IsKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tbp_Data = new System.Windows.Forms.TabPage();
+            this.ckb_IsName = new System.Windows.Forms.CheckBox();
+            this.ckb_IsPcZzl = new System.Windows.Forms.CheckBox();
             this.btn_GenerateData = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.txt_CPath = new System.Windows.Forms.TextBox();
@@ -73,8 +73,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.ckb_IsPcZzl = new System.Windows.Forms.CheckBox();
-            this.ckb_IsName = new System.Windows.Forms.CheckBox();
+            this.IsSelection = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cbx_TablePk = new FDBIntercross.UserControls.DropDownSearch();
             this.cbx_TableList = new FDBIntercross.UserControls.DropDownSearch();
             this.toolStrip1.SuspendLayout();
@@ -260,9 +260,10 @@
             this.dgv_Tables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_Tables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsSelection,
-            this.表名});
+            this.name});
             this.dgv_Tables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv_Tables.Location = new System.Drawing.Point(0, 0);
+            this.dgv_Tables.MultiSelect = false;
             this.dgv_Tables.Name = "dgv_Tables";
             this.dgv_Tables.ReadOnly = true;
             this.dgv_Tables.RowHeadersVisible = false;
@@ -270,24 +271,11 @@
             this.dgv_Tables.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgv_Tables.Size = new System.Drawing.Size(323, 370);
             this.dgv_Tables.TabIndex = 0;
-            this.dgv_Tables.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Tables_CellContentDoubleClick);
-            // 
-            // IsSelection
-            // 
-            this.IsSelection.HeaderText = "选择";
-            this.IsSelection.Name = "IsSelection";
-            this.IsSelection.ReadOnly = true;
-            this.IsSelection.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.IsSelection.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.IsSelection.Width = 50;
-            // 
-            // 表名
-            // 
-            this.表名.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.表名.DataPropertyName = "name";
-            this.表名.HeaderText = "表名";
-            this.表名.Name = "表名";
-            this.表名.ReadOnly = true;
+            this.dgv_Tables.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Tables_CellContentDoubleClick);
+            this.dgv_Tables.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgv_Tables_DataBindingComplete);
+            this.dgv_Tables.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_Tables_EditingControlShowing);
+            this.dgv_Tables.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.dgv_Tables_RowStateChanged);
+            this.dgv_Tables.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgv_Tables_KeyUp);
             // 
             // dgv_Column
             // 
@@ -383,6 +371,30 @@
             this.tbp_Data.TabIndex = 1;
             this.tbp_Data.Text = "数据脚本";
             this.tbp_Data.UseVisualStyleBackColor = true;
+            // 
+            // ckb_IsName
+            // 
+            this.ckb_IsName.AutoSize = true;
+            this.ckb_IsName.Checked = true;
+            this.ckb_IsName.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckb_IsName.Location = new System.Drawing.Point(750, 40);
+            this.ckb_IsName.Name = "ckb_IsName";
+            this.ckb_IsName.Size = new System.Drawing.Size(120, 16);
+            this.ckb_IsName.TabIndex = 9;
+            this.ckb_IsName.Text = "是否表名为文件名";
+            this.ckb_IsName.UseVisualStyleBackColor = true;
+            // 
+            // ckb_IsPcZzl
+            // 
+            this.ckb_IsPcZzl.AutoSize = true;
+            this.ckb_IsPcZzl.Checked = true;
+            this.ckb_IsPcZzl.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckb_IsPcZzl.Location = new System.Drawing.Point(750, 12);
+            this.ckb_IsPcZzl.Name = "ckb_IsPcZzl";
+            this.ckb_IsPcZzl.Size = new System.Drawing.Size(108, 16);
+            this.ckb_IsPcZzl.TabIndex = 8;
+            this.ckb_IsPcZzl.Text = "是否排除自增列";
+            this.ckb_IsPcZzl.UseVisualStyleBackColor = true;
             // 
             // btn_GenerateData
             // 
@@ -552,29 +564,22 @@
             this.label6.TabIndex = 0;
             this.label6.Text = "表名:";
             // 
-            // ckb_IsPcZzl
+            // IsSelection
             // 
-            this.ckb_IsPcZzl.AutoSize = true;
-            this.ckb_IsPcZzl.Checked = true;
-            this.ckb_IsPcZzl.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckb_IsPcZzl.Location = new System.Drawing.Point(750, 12);
-            this.ckb_IsPcZzl.Name = "ckb_IsPcZzl";
-            this.ckb_IsPcZzl.Size = new System.Drawing.Size(108, 16);
-            this.ckb_IsPcZzl.TabIndex = 8;
-            this.ckb_IsPcZzl.Text = "是否排除自增列";
-            this.ckb_IsPcZzl.UseVisualStyleBackColor = true;
+            this.IsSelection.HeaderText = "选择";
+            this.IsSelection.Name = "IsSelection";
+            this.IsSelection.ReadOnly = true;
+            this.IsSelection.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.IsSelection.Width = 50;
             // 
-            // ckb_IsName
+            // name
             // 
-            this.ckb_IsName.AutoSize = true;
-            this.ckb_IsName.Checked = true;
-            this.ckb_IsName.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckb_IsName.Location = new System.Drawing.Point(750, 40);
-            this.ckb_IsName.Name = "ckb_IsName";
-            this.ckb_IsName.Size = new System.Drawing.Size(120, 16);
-            this.ckb_IsName.TabIndex = 9;
-            this.ckb_IsName.Text = "是否表名为文件名";
-            this.ckb_IsName.UseVisualStyleBackColor = true;
+            this.name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.name.DataPropertyName = "name";
+            this.name.HeaderText = "表名";
+            this.name.Name = "name";
+            this.name.ReadOnly = true;
+            this.name.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // cbx_TablePk
             // 
@@ -666,8 +671,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsIdentity;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IS_NULLABLE;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsKey;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsSelection;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 表名;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btn_GenerateData;
@@ -689,6 +692,8 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox ckb_IsPcZzl;
         private System.Windows.Forms.CheckBox ckb_IsName;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IsSelection;
+        private System.Windows.Forms.DataGridViewTextBoxColumn name;
     }
 }
 

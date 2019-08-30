@@ -6,6 +6,7 @@ using FDBIntercross.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace FDBIntercross
@@ -179,7 +180,7 @@ namespace FDBIntercross
         private void LoadCreate(DBInfoModel model)
         {
             var dbTable = DBInfo.GetTablesInfo(model.def_DB);
-            dgv_Tables.DataSource = dbTable;
+            dgv_TablesDataSource(dbTable);
             DataTable dt = (DataTable)dgv_Column.DataSource;
             if (dt != null)
             {
@@ -188,12 +189,47 @@ namespace FDBIntercross
             }
             txt_Path.Text = SavePathModel.F_DBInfo.Path;
         }
+        private void dgv_TablesDataSource(DataTable dbTable, string str = "")
+        {
+            var dr = dbTable.NewRow();
+            dr[0] = str;
+            dbTable.Rows.InsertAt(dr, 0);
+            dgv_Tables.DataSource = dbTable;
+            dgv_Tables.Tag = dbTable;
+        }
         private string dgv_Tables_SelectName = string.Empty;
         private void dgv_Tables_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            var flag = dgv_Tables.Rows[e.RowIndex].Cells[0].Value;
-            dgv_Tables.Rows[e.RowIndex].Cells[0].Value = flag != null && flag.ConvertBoolean() ? false : true;
+            var flag = dgv_Tables.Rows[e.RowIndex].Cells[0].Value != null && dgv_Tables.Rows[e.RowIndex].Cells[0].Value.ConvertBoolean() ? false : true;
+            if (e.RowIndex == 0)
+            {
+                if (e.ColumnIndex == 0)
+                {
+                    dgv_Tables.Rows[e.RowIndex].Cells["IsSelection"].Value = flag;
+                    for (int i = 1; i < dgv_Tables.Rows.Count; i++)
+                    {
+                        var item = dgv_Tables.Rows[i];
+                        item.Cells["IsSelection"].Value = dgv_Tables.Rows[0].Cells[0].Value;
+                    }
+                }
+                else
+                {
+                    dgv_Tables.ReadOnly = false;
+                    //dgv_Tables.Rows[0].Cells["name"].ReadOnly = false;
+                    //dgv_Tables.Columns["name"].ReadOnly = false;
+                    dgv_Tables.Columns["name"].DefaultCellStyle.BackColor = Color.White;
+                    DataGridViewCell cell = dgv_Tables.Rows[0].Cells["name"];
+                    dgv_Tables.CurrentCell = cell;
+                    dgv_Tables.BeginEdit(true);
+                }
+                return;
+            }
+            else
+            {
+                dgv_Tables.ReadOnly = true;
+            }
+            dgv_Tables.Rows[e.RowIndex].Cells[0].Value = flag;
             var name = dgv_Tables.Rows[e.RowIndex].Cells[1].Value.ToString().Trim();
             if (!string.IsNullOrEmpty(name))
             {
@@ -235,6 +271,46 @@ namespace FDBIntercross
             catch (Exception ex)
             {
                 MessageBox.Show("生成失败");
+            }
+        }
+
+        private void dgv_Tables_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (!dgv_Tables.ReadOnly)
+            {
+                var txtBox = ((TextBox)e.Control);
+                txtBox.KeyUp -= new KeyEventHandler(dgv_Tables_KeyUp);
+                txtBox.KeyUp += new KeyEventHandler(dgv_Tables_KeyUp);
+            }
+        }
+        private void dgv_Tables_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!dgv_Tables.ReadOnly)
+            {
+                var txtStr = dgv_Tables.CurrentCell.EditedFormattedValue.ConvertString().ToLower();
+                for (int i = 1; i < dgv_Tables.Rows.Count; i++)
+                {
+                    var item = dgv_Tables.Rows[i];
+                    item.Visible = true;
+                    item.Cells["IsSelection"].Value = false;
+                    if (!item.Cells["name"].Value.ConvertString().ToLower().Contains(txtStr))
+                    {
+                        item.Visible = false;
+                    }
+                    else
+                    {
+                        item.Cells["IsSelection"].Value = dgv_Tables.Rows[0].Cells[0].Value;
+                    }
+                }
+            }
+        }
+
+        private void dgv_Tables_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            if (dgv_Tables.CurrentRow != null)
+            {
+                dgv_Tables.Rows[0].Tag = "All";
+                this.dgv_Tables.CurrentRow.Selected = false;
             }
         }
         #endregion 建表
@@ -506,5 +582,12 @@ namespace FDBIntercross
             cbo_db_SelectedIndexChanged(null, null);
         }
 
+        private void dgv_Tables_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+        {
+            if (e.Row.Tag.ConvertString().Equals("All"))
+            {
+                e.Row.Selected = false;
+            }
+        }
     }
 }
