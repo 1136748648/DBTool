@@ -31,6 +31,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txt_Name = new System.Windows.Forms.TextBox();
             this.btn_Save = new System.Windows.Forms.Button();
+            this.btn_SavePath = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -44,14 +45,14 @@
             // 
             // txt_Name
             // 
-            this.txt_Name.Location = new System.Drawing.Point(117, 33);
+            this.txt_Name.Location = new System.Drawing.Point(117, 32);
             this.txt_Name.Name = "txt_Name";
-            this.txt_Name.Size = new System.Drawing.Size(210, 21);
+            this.txt_Name.Size = new System.Drawing.Size(249, 21);
             this.txt_Name.TabIndex = 1;
             // 
             // btn_Save
             // 
-            this.btn_Save.Location = new System.Drawing.Point(142, 75);
+            this.btn_Save.Location = new System.Drawing.Point(204, 75);
             this.btn_Save.Name = "btn_Save";
             this.btn_Save.Size = new System.Drawing.Size(75, 23);
             this.btn_Save.TabIndex = 2;
@@ -59,11 +60,23 @@
             this.btn_Save.UseVisualStyleBackColor = true;
             this.btn_Save.Click += new System.EventHandler(this.btn_Save_Click);
             // 
+            // btn_SavePath
+            // 
+            this.btn_SavePath.Location = new System.Drawing.Point(372, 31);
+            this.btn_SavePath.Name = "btn_SavePath";
+            this.btn_SavePath.Size = new System.Drawing.Size(75, 23);
+            this.btn_SavePath.TabIndex = 3;
+            this.btn_SavePath.Text = "选择文件夹";
+            this.btn_SavePath.UseVisualStyleBackColor = true;
+            this.btn_SavePath.Visible = false;
+            this.btn_SavePath.Click += new System.EventHandler(this.btn_SavePath_Click);
+            // 
             // SetName
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(381, 110);
+            this.ClientSize = new System.Drawing.Size(465, 110);
+            this.Controls.Add(this.btn_SavePath);
             this.Controls.Add(this.btn_Save);
             this.Controls.Add(this.txt_Name);
             this.Controls.Add(this.label1);
@@ -83,5 +96,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txt_Name;
         private System.Windows.Forms.Button btn_Save;
+        private System.Windows.Forms.Button btn_SavePath;
     }
 }

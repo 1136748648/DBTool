@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MIntercross));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsddb_DBSet = new System.Windows.Forms.ToolStripDropDownButton();
             this.ts_Add = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,13 +39,11 @@
             this.cbo_db = new System.Windows.Forms.ComboBox();
             this.cbo_dbset = new System.Windows.Forms.ComboBox();
             this.tcl_tabList = new System.Windows.Forms.TabControl();
-            this.tbp_Create = new System.Windows.Forms.TabPage();
-            this.btn_Path = new System.Windows.Forms.Button();
-            this.btn_Generate = new System.Windows.Forms.Button();
-            this.txt_Path = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.tbp_TableScript = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgv_Tables = new System.Windows.Forms.DataGridView();
+            this.IsSelection = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgv_Column = new System.Windows.Forms.DataGridView();
             this.COLUMN_NAME = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DATA_TYPE = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,15 +51,7 @@
             this.IsIdentity = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.IS_NULLABLE = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.IsKey = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.tbp_Data = new System.Windows.Forms.TabPage();
-            this.ckb_IsName = new System.Windows.Forms.CheckBox();
-            this.ckb_IsPcZzl = new System.Windows.Forms.CheckBox();
-            this.btn_GenerateData = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txt_CPath = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.cbx_Config = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.tbp_DataScript = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btn_AddConfig = new System.Windows.Forms.Button();
             this.pl_CbConfig = new System.Windows.Forms.Panel();
@@ -70,23 +61,32 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txt_DbSql = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.IsSelection = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cbx_TablePk = new FDBIntercross.UserControls.DropDownSearch();
+            this.label7 = new System.Windows.Forms.Label();
             this.cbx_TableList = new FDBIntercross.UserControls.DropDownSearch();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btn_GenerateData = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.tsddb_DataScript = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ts_ds_IsPcZzl = new System.Windows.Forms.ToolStripMenuItem();
+            this.ts_ds_IsTName = new System.Windows.Forms.ToolStripMenuItem();
+            this.ts_ds_OneFiled = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.ts_ds_AddDataJb = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsddb_TableScript = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ts_ts_IsToUpper = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ts_SetPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tcl_tabList.SuspendLayout();
-            this.tbp_Create.SuspendLayout();
+            this.tbp_TableScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Tables)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Column)).BeginInit();
-            this.tbp_Data.SuspendLayout();
+            this.tbp_DataScript.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.pl_CbConfig.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -95,7 +95,10 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsddb_DBSet});
+            this.tsddb_DBSet,
+            this.tsddb_TableScript,
+            this.tsddb_DataScript,
+            this.toolStripSplitButton3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1014, 25);
@@ -116,7 +119,7 @@
             // ts_Add
             // 
             this.ts_Add.Name = "ts_Add";
-            this.ts_Add.Size = new System.Drawing.Size(124, 22);
+            this.ts_Add.Size = new System.Drawing.Size(180, 22);
             this.ts_Add.Tag = "default";
             this.ts_Add.Text = "新增配置";
             this.ts_Add.Click += new System.EventHandler(this.ts_Add_Click);
@@ -124,7 +127,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             this.toolStripSeparator1.Tag = "default";
             // 
             // label1
@@ -149,7 +152,7 @@
             // 
             this.cbo_db.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbo_db.FormattingEnabled = true;
-            this.cbo_db.Location = new System.Drawing.Point(321, 47);
+            this.cbo_db.Location = new System.Drawing.Point(321, 46);
             this.cbo_db.Name = "cbo_db";
             this.cbo_db.Size = new System.Drawing.Size(165, 20);
             this.cbo_db.TabIndex = 4;
@@ -159,7 +162,7 @@
             // 
             this.cbo_dbset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbo_dbset.FormattingEnabled = true;
-            this.cbo_dbset.Location = new System.Drawing.Point(101, 47);
+            this.cbo_dbset.Location = new System.Drawing.Point(101, 46);
             this.cbo_dbset.Name = "cbo_dbset";
             this.cbo_dbset.Size = new System.Drawing.Size(134, 20);
             this.cbo_dbset.TabIndex = 5;
@@ -167,8 +170,8 @@
             // 
             // tcl_tabList
             // 
-            this.tcl_tabList.Controls.Add(this.tbp_Create);
-            this.tcl_tabList.Controls.Add(this.tbp_Data);
+            this.tcl_tabList.Controls.Add(this.tbp_TableScript);
+            this.tcl_tabList.Controls.Add(this.tbp_DataScript);
             this.tcl_tabList.Location = new System.Drawing.Point(12, 96);
             this.tcl_tabList.Name = "tcl_tabList";
             this.tcl_tabList.SelectedIndex = 0;
@@ -176,62 +179,21 @@
             this.tcl_tabList.TabIndex = 6;
             this.tcl_tabList.SelectedIndexChanged += new System.EventHandler(this.tcl_tabList_SelectedIndexChanged);
             // 
-            // tbp_Create
+            // tbp_TableScript
             // 
-            this.tbp_Create.Controls.Add(this.btn_Path);
-            this.tbp_Create.Controls.Add(this.btn_Generate);
-            this.tbp_Create.Controls.Add(this.txt_Path);
-            this.tbp_Create.Controls.Add(this.label3);
-            this.tbp_Create.Controls.Add(this.splitContainer1);
-            this.tbp_Create.Location = new System.Drawing.Point(4, 22);
-            this.tbp_Create.Name = "tbp_Create";
-            this.tbp_Create.Padding = new System.Windows.Forms.Padding(3);
-            this.tbp_Create.Size = new System.Drawing.Size(982, 432);
-            this.tbp_Create.TabIndex = 0;
-            this.tbp_Create.Text = "建表";
-            this.tbp_Create.UseVisualStyleBackColor = true;
-            // 
-            // btn_Path
-            // 
-            this.btn_Path.Location = new System.Drawing.Point(631, 16);
-            this.btn_Path.Name = "btn_Path";
-            this.btn_Path.Size = new System.Drawing.Size(100, 25);
-            this.btn_Path.TabIndex = 5;
-            this.btn_Path.Tag = "txt_Path";
-            this.btn_Path.Text = "请选择文件夹";
-            this.btn_Path.UseVisualStyleBackColor = true;
-            this.btn_Path.Click += new System.EventHandler(this.btn_Path_Click);
-            // 
-            // btn_Generate
-            // 
-            this.btn_Generate.Location = new System.Drawing.Point(749, 16);
-            this.btn_Generate.Name = "btn_Generate";
-            this.btn_Generate.Size = new System.Drawing.Size(100, 25);
-            this.btn_Generate.TabIndex = 4;
-            this.btn_Generate.Text = "生成表脚本";
-            this.btn_Generate.UseVisualStyleBackColor = true;
-            this.btn_Generate.Click += new System.EventHandler(this.btn_Generate_Click);
-            // 
-            // txt_Path
-            // 
-            this.txt_Path.Location = new System.Drawing.Point(98, 18);
-            this.txt_Path.Name = "txt_Path";
-            this.txt_Path.Size = new System.Drawing.Size(504, 21);
-            this.txt_Path.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(22, 21);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 12);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "保存路径:";
+            this.tbp_TableScript.Controls.Add(this.splitContainer1);
+            this.tbp_TableScript.Location = new System.Drawing.Point(4, 22);
+            this.tbp_TableScript.Name = "tbp_TableScript";
+            this.tbp_TableScript.Padding = new System.Windows.Forms.Padding(3);
+            this.tbp_TableScript.Size = new System.Drawing.Size(982, 432);
+            this.tbp_TableScript.TabIndex = 0;
+            this.tbp_TableScript.Text = "表脚本";
+            this.tbp_TableScript.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 59);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -241,7 +203,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dgv_Column);
-            this.splitContainer1.Size = new System.Drawing.Size(976, 370);
+            this.splitContainer1.Size = new System.Drawing.Size(976, 426);
             this.splitContainer1.SplitterDistance = 323;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -250,13 +212,13 @@
             this.dgv_Tables.AllowUserToAddRows = false;
             this.dgv_Tables.AllowUserToDeleteRows = false;
             this.dgv_Tables.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.dgv_Tables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.dgv_Tables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgv_Tables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_Tables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsSelection,
@@ -269,13 +231,30 @@
             this.dgv_Tables.RowHeadersVisible = false;
             this.dgv_Tables.RowTemplate.Height = 23;
             this.dgv_Tables.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgv_Tables.Size = new System.Drawing.Size(323, 370);
+            this.dgv_Tables.Size = new System.Drawing.Size(323, 426);
             this.dgv_Tables.TabIndex = 0;
             this.dgv_Tables.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Tables_CellContentDoubleClick);
             this.dgv_Tables.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgv_Tables_DataBindingComplete);
             this.dgv_Tables.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_Tables_EditingControlShowing);
             this.dgv_Tables.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.dgv_Tables_RowStateChanged);
             this.dgv_Tables.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgv_Tables_KeyUp);
+            // 
+            // IsSelection
+            // 
+            this.IsSelection.HeaderText = "选择";
+            this.IsSelection.Name = "IsSelection";
+            this.IsSelection.ReadOnly = true;
+            this.IsSelection.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.IsSelection.Width = 50;
+            // 
+            // name
+            // 
+            this.name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.name.DataPropertyName = "name";
+            this.name.HeaderText = "表名";
+            this.name.Name = "name";
+            this.name.ReadOnly = true;
+            this.name.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // dgv_Column
             // 
@@ -297,7 +276,7 @@
             this.dgv_Column.ReadOnly = true;
             this.dgv_Column.RowHeadersVisible = false;
             this.dgv_Column.RowTemplate.Height = 23;
-            this.dgv_Column.Size = new System.Drawing.Size(649, 370);
+            this.dgv_Column.Size = new System.Drawing.Size(649, 426);
             this.dgv_Column.TabIndex = 0;
             // 
             // COLUMN_NAME
@@ -352,121 +331,32 @@
             this.IsKey.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.IsKey.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
-            // tbp_Data
+            // tbp_DataScript
             // 
-            this.tbp_Data.Controls.Add(this.ckb_IsName);
-            this.tbp_Data.Controls.Add(this.ckb_IsPcZzl);
-            this.tbp_Data.Controls.Add(this.btn_GenerateData);
-            this.tbp_Data.Controls.Add(this.button1);
-            this.tbp_Data.Controls.Add(this.txt_CPath);
-            this.tbp_Data.Controls.Add(this.label5);
-            this.tbp_Data.Controls.Add(this.cbx_Config);
-            this.tbp_Data.Controls.Add(this.label4);
-            this.tbp_Data.Controls.Add(this.groupBox2);
-            this.tbp_Data.Controls.Add(this.groupBox1);
-            this.tbp_Data.Location = new System.Drawing.Point(4, 22);
-            this.tbp_Data.Name = "tbp_Data";
-            this.tbp_Data.Padding = new System.Windows.Forms.Padding(3);
-            this.tbp_Data.Size = new System.Drawing.Size(982, 432);
-            this.tbp_Data.TabIndex = 1;
-            this.tbp_Data.Text = "数据脚本";
-            this.tbp_Data.UseVisualStyleBackColor = true;
-            // 
-            // ckb_IsName
-            // 
-            this.ckb_IsName.AutoSize = true;
-            this.ckb_IsName.Checked = true;
-            this.ckb_IsName.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckb_IsName.Location = new System.Drawing.Point(750, 40);
-            this.ckb_IsName.Name = "ckb_IsName";
-            this.ckb_IsName.Size = new System.Drawing.Size(120, 16);
-            this.ckb_IsName.TabIndex = 9;
-            this.ckb_IsName.Text = "是否表名为文件名";
-            this.ckb_IsName.UseVisualStyleBackColor = true;
-            // 
-            // ckb_IsPcZzl
-            // 
-            this.ckb_IsPcZzl.AutoSize = true;
-            this.ckb_IsPcZzl.Checked = true;
-            this.ckb_IsPcZzl.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckb_IsPcZzl.Location = new System.Drawing.Point(750, 12);
-            this.ckb_IsPcZzl.Name = "ckb_IsPcZzl";
-            this.ckb_IsPcZzl.Size = new System.Drawing.Size(108, 16);
-            this.ckb_IsPcZzl.TabIndex = 8;
-            this.ckb_IsPcZzl.Text = "是否排除自增列";
-            this.ckb_IsPcZzl.UseVisualStyleBackColor = true;
-            // 
-            // btn_GenerateData
-            // 
-            this.btn_GenerateData.Location = new System.Drawing.Point(872, 21);
-            this.btn_GenerateData.Name = "btn_GenerateData";
-            this.btn_GenerateData.Size = new System.Drawing.Size(90, 23);
-            this.btn_GenerateData.TabIndex = 7;
-            this.btn_GenerateData.Text = "生成保存脚本";
-            this.btn_GenerateData.UseVisualStyleBackColor = true;
-            this.btn_GenerateData.Click += new System.EventHandler(this.btn_GenerateData_Click);
-            // 
-            // button1
-            // 
-            this.button1.AccessibleName = "";
-            this.button1.Location = new System.Drawing.Point(667, 21);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 6;
-            this.button1.Tag = "txt_CPath";
-            this.button1.Text = "选择文件夹";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btn_Path_Click);
-            // 
-            // txt_CPath
-            // 
-            this.txt_CPath.Location = new System.Drawing.Point(289, 22);
-            this.txt_CPath.Name = "txt_CPath";
-            this.txt_CPath.Size = new System.Drawing.Size(368, 21);
-            this.txt_CPath.TabIndex = 5;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(220, 26);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(59, 12);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "保存路径:";
-            // 
-            // cbx_Config
-            // 
-            this.cbx_Config.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbx_Config.FormattingEnabled = true;
-            this.cbx_Config.Location = new System.Drawing.Point(71, 22);
-            this.cbx_Config.Name = "cbx_Config";
-            this.cbx_Config.Size = new System.Drawing.Size(139, 20);
-            this.cbx_Config.TabIndex = 3;
-            this.cbx_Config.SelectedIndexChanged += new System.EventHandler(this.cbx_Config_SelectedIndexChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(26, 26);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 12);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "配置:";
+            this.tbp_DataScript.Controls.Add(this.groupBox2);
+            this.tbp_DataScript.Controls.Add(this.groupBox1);
+            this.tbp_DataScript.Location = new System.Drawing.Point(4, 22);
+            this.tbp_DataScript.Name = "tbp_DataScript";
+            this.tbp_DataScript.Padding = new System.Windows.Forms.Padding(3);
+            this.tbp_DataScript.Size = new System.Drawing.Size(982, 432);
+            this.tbp_DataScript.TabIndex = 1;
+            this.tbp_DataScript.Text = "数据脚本";
+            this.tbp_DataScript.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btn_AddConfig);
             this.groupBox2.Controls.Add(this.pl_CbConfig);
-            this.groupBox2.Location = new System.Drawing.Point(381, 62);
+            this.groupBox2.Location = new System.Drawing.Point(381, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(600, 370);
+            this.groupBox2.Size = new System.Drawing.Size(600, 426);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "从表";
             // 
             // btn_AddConfig
             // 
-            this.btn_AddConfig.Location = new System.Drawing.Point(6, 341);
+            this.btn_AddConfig.Location = new System.Drawing.Point(6, 395);
             this.btn_AddConfig.Name = "btn_AddConfig";
             this.btn_AddConfig.Size = new System.Drawing.Size(588, 23);
             this.btn_AddConfig.TabIndex = 1;
@@ -483,7 +373,7 @@
             this.pl_CbConfig.Controls.Add(this.label9);
             this.pl_CbConfig.Location = new System.Drawing.Point(6, 20);
             this.pl_CbConfig.Name = "pl_CbConfig";
-            this.pl_CbConfig.Size = new System.Drawing.Size(588, 315);
+            this.pl_CbConfig.Size = new System.Drawing.Size(588, 369);
             this.pl_CbConfig.TabIndex = 0;
             this.pl_CbConfig.Tag = "0";
             // 
@@ -522,9 +412,9 @@
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.cbx_TableList);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Location = new System.Drawing.Point(0, 62);
+            this.groupBox1.Location = new System.Drawing.Point(0, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(375, 370);
+            this.groupBox1.Size = new System.Drawing.Size(375, 426);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "主表";
@@ -543,8 +433,19 @@
             this.txt_DbSql.Location = new System.Drawing.Point(28, 148);
             this.txt_DbSql.Multiline = true;
             this.txt_DbSql.Name = "txt_DbSql";
-            this.txt_DbSql.Size = new System.Drawing.Size(329, 204);
+            this.txt_DbSql.Size = new System.Drawing.Size(329, 255);
             this.txt_DbSql.TabIndex = 4;
+            // 
+            // cbx_TablePk
+            // 
+            this.cbx_TablePk.DisplayMember = "";
+            this.cbx_TablePk.DroppedDown = false;
+            this.cbx_TablePk.Location = new System.Drawing.Point(85, 76);
+            this.cbx_TablePk.Name = "cbx_TablePk";
+            this.cbx_TablePk.SelectedIndex = -1;
+            this.cbx_TablePk.Size = new System.Drawing.Size(258, 20);
+            this.cbx_TablePk.TabIndex = 3;
+            this.cbx_TablePk.ValueMember = "";
             // 
             // label7
             // 
@@ -555,6 +456,18 @@
             this.label7.TabIndex = 2;
             this.label7.Text = "主键:";
             // 
+            // cbx_TableList
+            // 
+            this.cbx_TableList.DisplayMember = "";
+            this.cbx_TableList.DroppedDown = false;
+            this.cbx_TableList.Location = new System.Drawing.Point(85, 36);
+            this.cbx_TableList.Name = "cbx_TableList";
+            this.cbx_TableList.SelectedIndex = -1;
+            this.cbx_TableList.Size = new System.Drawing.Size(258, 20);
+            this.cbx_TableList.TabIndex = 1;
+            this.cbx_TableList.ValueMember = "";
+            this.cbx_TableList.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -564,51 +477,108 @@
             this.label6.TabIndex = 0;
             this.label6.Text = "表名:";
             // 
-            // IsSelection
+            // btn_GenerateData
             // 
-            this.IsSelection.HeaderText = "选择";
-            this.IsSelection.Name = "IsSelection";
-            this.IsSelection.ReadOnly = true;
-            this.IsSelection.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.IsSelection.Width = 50;
+            this.btn_GenerateData.Location = new System.Drawing.Point(569, 45);
+            this.btn_GenerateData.Name = "btn_GenerateData";
+            this.btn_GenerateData.Size = new System.Drawing.Size(90, 23);
+            this.btn_GenerateData.TabIndex = 7;
+            this.btn_GenerateData.Text = "生成脚本";
+            this.btn_GenerateData.UseVisualStyleBackColor = true;
+            this.btn_GenerateData.Click += new System.EventHandler(this.btn_GenerateData_Click);
             // 
-            // name
+            // tsddb_DataScript
             // 
-            this.name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.name.DataPropertyName = "name";
-            this.name.HeaderText = "表名";
-            this.name.Name = "name";
-            this.name.ReadOnly = true;
-            this.name.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.tsddb_DataScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsddb_DataScript.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ts_ds_IsPcZzl,
+            this.ts_ds_IsTName,
+            this.ts_ds_OneFiled,
+            this.toolStripSeparator2,
+            this.ts_ds_AddDataJb});
+            this.tsddb_DataScript.Image = ((System.Drawing.Image)(resources.GetObject("tsddb_DataScript.Image")));
+            this.tsddb_DataScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsddb_DataScript.Name = "tsddb_DataScript";
+            this.tsddb_DataScript.Size = new System.Drawing.Size(93, 22);
+            this.tsddb_DataScript.Text = "数据脚本配置";
             // 
-            // cbx_TablePk
+            // ts_ds_IsPcZzl
             // 
-            this.cbx_TablePk.DataSource = null;
-            this.cbx_TablePk.DisplayMember = "";
-            this.cbx_TablePk.DroppedDown = false;
-            this.cbx_TablePk.Location = new System.Drawing.Point(85, 76);
-            this.cbx_TablePk.Name = "cbx_TablePk";
-            this.cbx_TablePk.Size = new System.Drawing.Size(258, 20);
-            this.cbx_TablePk.TabIndex = 3;
-            this.cbx_TablePk.ValueMember = "";
+            this.ts_ds_IsPcZzl.CheckOnClick = true;
+            this.ts_ds_IsPcZzl.Name = "ts_ds_IsPcZzl";
+            this.ts_ds_IsPcZzl.Size = new System.Drawing.Size(180, 22);
+            this.ts_ds_IsPcZzl.Text = "排除自增列";
             // 
-            // cbx_TableList
+            // ts_ds_IsTName
             // 
-            this.cbx_TableList.DataSource = null;
-            this.cbx_TableList.DisplayMember = "";
-            this.cbx_TableList.DroppedDown = false;
-            this.cbx_TableList.Location = new System.Drawing.Point(85, 36);
-            this.cbx_TableList.Name = "cbx_TableList";
-            this.cbx_TableList.Size = new System.Drawing.Size(258, 20);
-            this.cbx_TableList.TabIndex = 1;
-            this.cbx_TableList.ValueMember = "";
-            this.cbx_TableList.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            this.ts_ds_IsTName.CheckOnClick = true;
+            this.ts_ds_IsTName.Name = "ts_ds_IsTName";
+            this.ts_ds_IsTName.Size = new System.Drawing.Size(180, 22);
+            this.ts_ds_IsTName.Text = "表名为文件名";
+            // 
+            // ts_ds_OneFiled
+            // 
+            this.ts_ds_OneFiled.Checked = true;
+            this.ts_ds_OneFiled.CheckOnClick = true;
+            this.ts_ds_OneFiled.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ts_ds_OneFiled.Name = "ts_ds_OneFiled";
+            this.ts_ds_OneFiled.Size = new System.Drawing.Size(180, 22);
+            this.ts_ds_OneFiled.Text = "生成一个文件";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            // 
+            // ts_ds_AddDataJb
+            // 
+            this.ts_ds_AddDataJb.Name = "ts_ds_AddDataJb";
+            this.ts_ds_AddDataJb.Size = new System.Drawing.Size(180, 22);
+            this.ts_ds_AddDataJb.Text = "新建数据脚本";
+            this.ts_ds_AddDataJb.Click += new System.EventHandler(this.ts_AddDataJb_Click);
+            // 
+            // tsddb_TableScript
+            // 
+            this.tsddb_TableScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsddb_TableScript.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ts_ts_IsToUpper});
+            this.tsddb_TableScript.Image = ((System.Drawing.Image)(resources.GetObject("tsddb_TableScript.Image")));
+            this.tsddb_TableScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsddb_TableScript.Name = "tsddb_TableScript";
+            this.tsddb_TableScript.Size = new System.Drawing.Size(81, 22);
+            this.tsddb_TableScript.Text = "表脚本配置";
+            // 
+            // ts_ts_IsToUpper
+            // 
+            this.ts_ts_IsToUpper.CheckOnClick = true;
+            this.ts_ts_IsToUpper.Name = "ts_ts_IsToUpper";
+            this.ts_ts_IsToUpper.Size = new System.Drawing.Size(180, 22);
+            this.ts_ts_IsToUpper.Text = "列名称是否大写";
+            // 
+            // toolStripSplitButton3
+            // 
+            this.toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripSplitButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ts_SetPath});
+            this.toolStripSplitButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton3.Image")));
+            this.toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton3.Name = "toolStripSplitButton3";
+            this.toolStripSplitButton3.Size = new System.Drawing.Size(69, 22);
+            this.toolStripSplitButton3.Text = "系统配置";
+            // 
+            // ts_SetPath
+            // 
+            this.ts_SetPath.Name = "ts_SetPath";
+            this.ts_SetPath.Size = new System.Drawing.Size(180, 22);
+            this.ts_SetPath.Text = "文件保存路径";
+            this.ts_SetPath.Click += new System.EventHandler(this.ts_SetPath_Click);
             // 
             // MIntercross
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1014, 566);
+            this.Controls.Add(this.btn_GenerateData);
             this.Controls.Add(this.tcl_tabList);
             this.Controls.Add(this.cbo_dbset);
             this.Controls.Add(this.cbo_db);
@@ -624,16 +594,14 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tcl_tabList.ResumeLayout(false);
-            this.tbp_Create.ResumeLayout(false);
-            this.tbp_Create.PerformLayout();
+            this.tbp_TableScript.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Tables)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Column)).EndInit();
-            this.tbp_Data.ResumeLayout(false);
-            this.tbp_Data.PerformLayout();
+            this.tbp_DataScript.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.pl_CbConfig.ResumeLayout(false);
             this.pl_CbConfig.PerformLayout();
@@ -653,18 +621,14 @@
         private System.Windows.Forms.ComboBox cbo_db;
         private System.Windows.Forms.ComboBox cbo_dbset;
         private System.Windows.Forms.TabControl tcl_tabList;
-        private System.Windows.Forms.TabPage tbp_Create;
+        private System.Windows.Forms.TabPage tbp_TableScript;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView dgv_Tables;
-        private System.Windows.Forms.TabPage tbp_Data;
+        private System.Windows.Forms.TabPage tbp_DataScript;
         private System.Windows.Forms.ToolStripMenuItem ts_Add;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.DataGridView dgv_Column;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.Windows.Forms.Button btn_Path;
-        private System.Windows.Forms.Button btn_Generate;
-        private System.Windows.Forms.TextBox txt_Path;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridViewTextBoxColumn COLUMN_NAME;
         private System.Windows.Forms.DataGridViewTextBoxColumn DATA_TYPE;
         private System.Windows.Forms.DataGridViewTextBoxColumn COLUMN_DEFAULT;
@@ -674,11 +638,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btn_GenerateData;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox txt_CPath;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.ComboBox cbx_Config;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txt_DbSql;
         private UserControls.DropDownSearch cbx_TablePk;
@@ -690,10 +649,18 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.CheckBox ckb_IsPcZzl;
-        private System.Windows.Forms.CheckBox ckb_IsName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsSelection;
         private System.Windows.Forms.DataGridViewTextBoxColumn name;
+        private System.Windows.Forms.ToolStripDropDownButton tsddb_TableScript;
+        private System.Windows.Forms.ToolStripMenuItem ts_ts_IsToUpper;
+        private System.Windows.Forms.ToolStripDropDownButton tsddb_DataScript;
+        private System.Windows.Forms.ToolStripMenuItem ts_ds_IsPcZzl;
+        private System.Windows.Forms.ToolStripMenuItem ts_ds_IsTName;
+        private System.Windows.Forms.ToolStripMenuItem ts_ds_OneFiled;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem ts_ds_AddDataJb;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripSplitButton3;
+        private System.Windows.Forms.ToolStripMenuItem ts_SetPath;
     }
 }
 

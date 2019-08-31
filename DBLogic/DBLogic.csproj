@@ -46,13 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBInfo.cs" />
-    <Compile Include="Logic\CreateTableLogic.cs" />
-    <Compile Include="Logic\GenerateDataLogic.cs" />
-    <Compile Include="Model\DBInfoModel.cs" />
-    <Compile Include="Model\SavePathModel.cs" />
-    <Compile Include="Model\DataConfigModel.cs" />
+    <Compile Include="Logic\TableScriptLogic.cs" />
+    <Compile Include="Logic\DataScriptLogic.cs" />
+    <Compile Include="Model\DataScriptConfigModel.cs" />
+    <Compile Include="Model\DBConfigModel.cs" />
+    <Compile Include="Model\SysConfigModel.cs" />
+    <Compile Include="Model\DataScriptModel.cs" />
+    <Compile Include="Model\TableConfigModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\FileModelBase.cs" />
+    <Compile Include="Model\FileBaseModel.cs" />
     <Compile Include="Util\FileUtil.cs" />
     <Compile Include="Util\ObjectExtensions.cs" />
   </ItemGroup>

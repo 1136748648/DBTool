@@ -9,7 +9,7 @@ namespace DBLogic
     public class DBInfo
     {
         private static string ConnectionStringTemp = "Data Source={0};Initial Catalog={1};User ID={2};Password={3}";
-        public static void SetConnectionString(DBInfoModel model)
+        public static void SetConnectionString(DBConfigModel model)
         {
             string str = string.Format(ConnectionStringTemp, model.Ip, model.def_DB, model.User, model.pwd);
             SQLHelper.Instance.ConnectionString = str;

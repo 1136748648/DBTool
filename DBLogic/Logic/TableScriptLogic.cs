@@ -1,15 +1,22 @@
-﻿using DBLogic.Util;
+﻿using DBLogic.Model;
+using DBLogic.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 
 namespace DBLogic.Logic
 {
-    public class CreateTableLogic
+    public class TableScriptLogic
     {
-        public static void CreateTableSql(List<string> nameTable, string path = "", bool isToUpper = true)
+        private static string GetPath()
         {
+            return Path.Combine(SysConfigModel.F_DBInfo.Path, "表脚本");
+        }
+        public static void CreateTableSql(List<string> nameTable, bool isToUpper)
+        {
+            string path = GetPath();
             if (nameTable != null)
             {
                 foreach (var item in nameTable)
@@ -29,16 +36,16 @@ namespace DBLogic.Logic
                     StringBuilder str1 = new StringBuilder();
                     StringBuilder str2 = new StringBuilder();
                     string PK = string.Empty;
-                    str1.AppendLine($@"/****** 对象:  Table [dbo].[{nameTable}]    脚本日期: {DateTime.Now.ToString("yyyy-MM-dd")} ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{nameTable}]') AND type in (N'U'))
-BEGIN
-CREATE TABLE [dbo].[{nameTable}](");
+                    str1.AppendLine($"/****** 对象:  Table [dbo].[{nameTable}]    脚本日期: {DateTime.Now.ToString("yyyy-MM-dd")} ******/");
+                    str1.AppendLine("SET ANSI_NULLS ON");
+                    str1.AppendLine("GO");
+                    str1.AppendLine("SET QUOTED_IDENTIFIER ON");
+                    str1.AppendLine("GO");
+                    str1.AppendLine("SET ANSI_PADDING ON");
+                    str1.AppendLine("GO");
+                    str1.AppendLine($"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{nameTable}]') AND type in (N'U'))");
+                    str1.AppendLine("BEGIN");
+                    str1.AppendLine($"CREATE TABLE [dbo].[{nameTable}](");
                     foreach (DataRow dr in dt.Rows)
                     {
                         string name = isToUpper ? dr["COLUMN_NAME"].ConvertString().ToUpper() : dr["COLUMN_NAME"].ConvertString();
@@ -54,21 +61,21 @@ CREATE TABLE [dbo].[{nameTable}](");
                         }
                         else
                         {
-                            str2.AppendLine($@"IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE id = object_id('[dbo].[{nameTable}]') 
-	AND OBJECTPROPERTY(id, N'IsUserTable') = 1 AND name = '{name}')
-        ALTER TABLE [dbo].[{nameTable}] ADD {name} {type} {identity} {isNull} {_default}
-GO");
+                            str2.AppendLine($"IF NOT EXISTS (SELECT * FROM dbo.syscolumns WHERE id = object_id('[dbo].[{nameTable}]')");
+                            str2.AppendLine($"	AND OBJECTPROPERTY(id, N'IsUserTable') = 1 AND name = '{name}')");
+                            str2.AppendLine($"        ALTER TABLE [dbo].[{nameTable}] ADD {name} {type} {identity} {isNull} {_default}");
+                            str2.AppendLine("GO");
                         }
                     }
                     if (!string.IsNullOrEmpty(PK))
                     {
                         str1.AppendLine($"constraint PK_{nameTable} primary key ({PK.TrimEnd(',')}),");
                     }
-                    str1.AppendLine(@")
-END
-GO
-SET ANSI_PADDING OFF
-GO");
+                    str1.AppendLine(")");
+                    str1.AppendLine("END");
+                    str1.AppendLine("GO");
+                    str1.AppendLine("SET ANSI_PADDING OFF");
+                    str1.AppendLine("GO");
                     str = str1.ToString() + str2.ToString();
                     FileUtil.SaveFile(path, nameTable + ".sql", str);
                 }

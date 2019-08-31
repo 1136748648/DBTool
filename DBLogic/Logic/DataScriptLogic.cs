@@ -3,16 +3,22 @@ using DBLogic.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 
 namespace DBLogic.Logic
 {
-    public class GenerateDataLogic
+    public class DataScriptLogic
     {
-        public static void GenerateData(DataConfigModel model)
+        private static string GetPath()
+        {
+            return Path.Combine(SysConfigModel.F_DBInfo.Path, "数据脚本");
+        }
+        public static void GenerateData(DataScriptModel model, bool isPcZzl, bool isOneFile)
         {
             try
             {
+                string path = GetPath();
                 var data = DBInfo.GetData(model.Sql.ConvertString());
                 if (data != null && data.Tables.Count > 0 && data.Tables[0].Rows.Count > 0)
                 {
@@ -20,7 +26,13 @@ namespace DBLogic.Logic
                     StringBuilder str = new StringBuilder();
                     str.AppendLine();
                     //主表数据
-                    TableData(dataTable, model.ZTableName, model.ZTablePk, model.IsPcZzl, ref str);
+                    TableData(dataTable, model.ZTableName, model.ZTablePk, isPcZzl, ref str);
+                    if (!isOneFile)
+                    {
+                        //保存文件
+                        FileUtil.SaveFile(Path.Combine(path, model.Name.ConvertString()), model.ZTableName.ConvertString() + ".sql", str.ConvertString());
+                        str.Clear();
+                    }
                     //从表数据
                     if (model.CbInfo != null && model.CbInfo.Count > 0)
                     {
@@ -38,7 +50,13 @@ namespace DBLogic.Logic
                             string sql = $"SELECT * FROM {item.TableName.ConvertString()} WHERE {item.CBZD.ConvertString()} IN ({tempStr})";
                             var tempData = DBInfo.GetData(sql).Tables[0];
                             //从表数据
-                            TableData(tempData, item.TableName, item.CBZD, model.IsPcZzl, ref str, IsAutoPk: true);
+                            TableData(tempData, item.TableName, item.CBZD, isPcZzl, ref str, IsAutoPk: true);
+                            if (!isOneFile)
+                            {
+                                //保存文件
+                                FileUtil.SaveFile(Path.Combine(path, model.Name.ConvertString()), item.TableName.ConvertString() + ".sql", str.ConvertString());
+                                str.Clear();
+                            }
                         }
                     }
                     if (string.IsNullOrEmpty(str.ToString()))
@@ -47,8 +65,11 @@ namespace DBLogic.Logic
                     }
                     str.Insert(0, $"/******{model.Name.ConvertString()} {DateTime.Now.ToString("yyyy-MM-dd")} START ******/");
                     str.AppendLine($"/******{model.Name.ConvertString()} END******/");
-                    //保存文件
-                    FileUtil.SaveFile(model.Path, model.Name.ConvertString() + ".sql", str.ConvertString());
+                    if (isOneFile)
+                    {
+                        //保存文件
+                        FileUtil.SaveFile(path, model.Name.ConvertString() + ".sql", str.ConvertString());
+                    }
                 }
             }
             catch (Exception e)
@@ -99,13 +120,18 @@ namespace DBLogic.Logic
                 {
                     strPk += item[s].ConvertString();
                 }
+                List<string> drData = new List<string>();
+                foreach (var drName in list)
+                {
+                    drData.Add(item[drName].ConvertString().Replace("''", "'").Replace("'", "''"));
+                }
                 str.AppendLine("--");
                 str.AppendLine($"IF NOT EXISTS (select 1 from {tableName.ConvertString()} where {pkName.ConvertString()}='{strPk}')");
                 str.AppendLine("BEGIN");
                 str.AppendLine($"    INSERT INTO {tableName.ConvertString()}");
                 str.AppendLine($"        ({string.Join(",", list)})");
                 str.AppendLine("    VALUES");
-                str.AppendLine($"        ('{string.Join("','", item.ItemArray)}')");
+                str.AppendLine($"        ('{string.Join("','", drData)}')");
                 str.AppendLine("END");
                 str.AppendLine("GO");
             }

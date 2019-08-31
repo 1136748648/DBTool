@@ -7,7 +7,7 @@ using System.IO;
 
 namespace DBLogic.Model
 {
-    public class FileModelBase<T> where T : new()
+    public class FileBaseModel<T> where T : new()
     {
         private string _id_ = Guid.NewGuid().ToString();
         [JsonProperty]
@@ -17,7 +17,7 @@ namespace DBLogic.Model
             {
                 return _id_;
             }
-            set
+            protected set
             {
                 _id_ = value;
             }
@@ -51,12 +51,12 @@ namespace DBLogic.Model
         {
             get
             {
-                if (FileModelBase.F_DbDic.ContainsKey(ClassName))
+                if (FileBaseModel.F_DbDic.ContainsKey(ClassName))
                 {
-                    var obj = FileModelBase.F_DbDic[ClassName];
+                    var obj = FileBaseModel.F_DbDic[ClassName];
                     if (obj is JContainer)
                     {
-                        return ((JContainer)FileModelBase.F_DbDic[ClassName]).ToObject<T>();
+                        return ((JContainer)FileBaseModel.F_DbDic[ClassName]).ToObject<T>();
                     }
                     else
                     {
@@ -68,30 +68,30 @@ namespace DBLogic.Model
         }
         public void AddOrUpdate()
         {
-            if (!FileModelBase.F_DbDic.ContainsKey(ClassName))
+            if (!FileBaseModel.F_DbDic.ContainsKey(ClassName))
             {
-                FileModelBase.F_DbDic.Add(ClassName, new JArray());
+                FileBaseModel.F_DbDic.Add(ClassName, new JArray());
             }
             if (IsList)
             {
                 Delete();
-                ((JArray)FileModelBase.F_DbDic[ClassName]).Add(JObject.FromObject(this));
+                ((JArray)FileBaseModel.F_DbDic[ClassName]).Add(JObject.FromObject(this));
             }
             else
             {
-                FileModelBase.F_DbDic[ClassName] = this;
+                FileBaseModel.F_DbDic[ClassName] = this;
             }
         }
         public void Delete()
         {
             if (IsList)
             {
-                if (!FileModelBase.F_DbDic.ContainsKey(ClassName))
+                if (!FileBaseModel.F_DbDic.ContainsKey(ClassName))
                 {
-                    FileModelBase.F_DbDic.Add(ClassName, new JArray());
+                    FileBaseModel.F_DbDic.Add(ClassName, new JArray());
                 }
                 JArray jArray = new JArray();
-                foreach (var i in (JArray)FileModelBase.F_DbDic[ClassName])
+                foreach (var i in (JArray)FileBaseModel.F_DbDic[ClassName])
                 {
 
                     if (!i["_Id_"].ConvertString().Equals(this._Id_))
@@ -99,11 +99,11 @@ namespace DBLogic.Model
                         jArray.Add(i);
                     }
                 }
-                FileModelBase.F_DbDic[ClassName] = jArray;
+                FileBaseModel.F_DbDic[ClassName] = jArray;
             }
         }
     }
-    public class FileModelBase
+    public class FileBaseModel
     {
         public static Dictionary<string, Object> F_DbDic { get; set; } = new Dictionary<string, Object>();
         public static string basePath { get; set; } = System.Environment.CurrentDirectory + "\\DBCache\\";

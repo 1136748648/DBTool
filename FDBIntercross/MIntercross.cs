@@ -15,23 +15,122 @@ namespace FDBIntercross
     {
         public MIntercross()
         {
-            FileModelBase.Load();
+            FileBaseModel.Load();
             InitializeComponent();
-            LoadDbConfig();
-        }
-        private void LoadDbConfig()
-        {
-            CreateToolStripMenuItem();
-            cbo_dbset.ValueMember = "ip";
-            cbo_dbset.DisplayMember = "ip";
-            cbo_dbset.DataSource = DBInfoModel.F_DBInfo;
+            LoadData();
         }
 
+        #region 程序主体
+        /// <summary>
+        /// 加载数据
+        /// </summary>
+        private void LoadData()
+        {
+            LoadToolData();
+            cbo_dbset.ValueMember = "_Id_";
+            cbo_dbset.DisplayMember = "ip";
+            cbo_dbset.DataSource = DBConfigModel.F_DBInfo;
+        }
+        /// <summary>
+        /// 加载数配置下拉框变化触发
+        /// </summary>
+        private void cbo_dbset_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                DBConfigModel model = (DBConfigModel)cbo_dbset.SelectedItem;
+                string def_DB = model.def_DB;
+                DBInfo.SetConnectionString(model);
+                var dbList = DBInfo.GetDBsInfo();
+                if (dbList != null)
+                {
+                    cbo_db.ValueMember = "name";
+                    cbo_db.DisplayMember = "name";
+                    cbo_db.DataSource = dbList;
+                    cbo_db.SelectedValue = def_DB;
+                }
+                else
+                {
+                    MessageBox.Show("连接失败!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("连接失败!");
+            }
+        }
+        /// <summary>
+        /// 数据库变化时触发
+        /// </summary>
+        private void cbo_db_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataRowView model = (DataRowView)cbo_db.SelectedItem;
+            DBConfigModel dbInfo = (DBConfigModel)cbo_dbset.SelectedItem;
+            if (model != null)
+            {
+                dbInfo.def_DB = model[0].ToString();
+                dbInfo.AddOrUpdate();
+                DBInfo.SetConnectionString(dbInfo);
+                if (tcl_tabList.SelectedTab.Name == tbp_TableScript.Name)
+                {
+                    LoadCreate(dbInfo);
+                }
+                else
+                {
+                    LoadDataJb(dbInfo);
+                }
+            }
+        }
+
+        private void btn_GenerateData_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(SysConfigModel.F_DBInfo.Path))
+            {
+                SysConfigModel sysConfigModel = new SysConfigModel()
+                {
+                    Path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+                };
+                sysConfigModel.AddOrUpdate();
+            }
+            if (tcl_tabList.SelectedTab.Name == tbp_TableScript.Name)
+            {
+                TableScript_Generate();
+            }
+            else
+            {
+                DataScript_Generate();
+            }
+        }
+
+        private void MIntercross_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            TableConfigModel tableConfigModel = new TableConfigModel()
+            {
+                IsToUpper = ts_ts_IsToUpper.Checked
+            };
+            DataScriptConfigModel dataScriptConfigModel = new DataScriptConfigModel()
+            {
+                IsPcZzl = ts_ds_IsPcZzl.Checked,
+                IsTName = ts_ds_IsTName.Checked
+            };
+            tableConfigModel.AddOrUpdate();
+            dataScriptConfigModel.AddOrUpdate();
+        }
+        #endregion 程序主体
+
         #region Tool栏db配置加载
+        private void LoadToolData()
+        {
+            ts_ts_IsToUpper.Checked = TableConfigModel.F_DBInfo.IsToUpper;
+            ts_ds_IsPcZzl.Checked = DataScriptConfigModel.F_DBInfo.IsPcZzl;
+            ts_ds_IsTName.Checked = DataScriptConfigModel.F_DBInfo.IsTName;
+            CreateToolStripMenuItem();
+            LoadJbTs();
+        }
+        #region 数据库配置
         private void CreateToolStripMenuItem()
         {
-            var dbList = DBInfoModel.F_DBInfo;
-            var a = tsddb_DBSet.DropDownItems[0];
+            var dbList = DBConfigModel.F_DBInfo;
             for (int i = tsddb_DBSet.DropDownItems.Count - 1; i >= 0; i--)
             {
                 var tag = (string)tsddb_DBSet.DropDownItems[i].Tag;
@@ -62,20 +161,20 @@ namespace FDBIntercross
         private void ts_Edit_Click(object sender, EventArgs e)
         {
             var edit = (ToolStripMenuItem)sender;
-            EditOrAdd((DBInfoModel)edit.Tag);
+            EditOrAdd((DBConfigModel)edit.Tag);
         }
         private void ts_Delete_Click(object sender, EventArgs e)
         {
             var edit = (ToolStripMenuItem)sender;
-            var item = (DBInfoModel)edit.Tag;
+            var item = (DBConfigModel)edit.Tag;
             item.Delete();
-            LoadDbConfig();
+            LoadData();
         }
         private void ts_Add_Click(object sender, EventArgs e)
         {
             EditOrAdd();
         }
-        private void EditOrAdd(DBInfoModel model = null)
+        private void EditOrAdd(DBConfigModel model = null)
         {
             DBConfig dBConfig = new DBConfig();
             if (model != null)
@@ -84,100 +183,96 @@ namespace FDBIntercross
             }
             if (dBConfig.ShowDialog() == DialogResult.OK)
             {
-                LoadDbConfig();
+                LoadData();
             };
             dBConfig.Activate();
         }
+        #endregion 数据库配置
+
+        #region 系统配置
+        private void ts_SetPath_Click(object sender, EventArgs e)
+        {
+            SetName setName = new SetName(true);
+            var model = SysConfigModel.F_DBInfo;
+            if (!string.IsNullOrEmpty(model.Path))
+            {
+                setName.TValue = model.Path.ConvertString();
+            }
+            if (setName.ShowDialog() == DialogResult.OK)
+            {
+                SysConfigModel savePathModel = new SysConfigModel();
+                savePathModel.Path = setName.TValue.ConvertString();
+                savePathModel.AddOrUpdate();
+            }
+        }
+        #endregion 系统配置
+
+        #region 数据脚本配置
+        private void LoadJbTs()
+        {
+            for (int i = tsddb_DataScript.DropDownItems.Count - 1; i >= 0; i--)
+            {
+                if (string.IsNullOrEmpty(tsddb_DataScript.DropDownItems[i].Name))
+                {
+                    tsddb_DataScript.DropDownItems.RemoveAt(i);
+                }
+            }
+            foreach (var item in DataScriptModel.F_DBInfo)
+            {
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem();
+                toolStripMenuItem.Text = item.Name.ConvertString();
+                ToolStripMenuItem Edit = new ToolStripMenuItem();
+                Edit.Text = "使用";
+                Edit.Tag = item;
+                Edit.Click += (sender, e) =>
+                {
+                    CbConfigClear();
+                    var model = ((sender as ToolStripMenuItem).Tag as DataScriptModel);
+                    cbx_TableList.Text = model.ZTableName;
+                    cbx_TablePk.Text = model.ZTablePk;
+                    txt_DbSql.Text = model.Sql;
+                    if (model.CbInfo != null && model.CbInfo.Count > 0)
+                    {
+                        foreach (var i in model.CbInfo)
+                        {
+                            var pl = StructureControl();
+                            (pl.Controls["table"] as DropDownSearch).Text = i.TableName;
+                            (pl.Controls["cbzd"] as DropDownSearch).Text = i.CBZD;
+                            (pl.Controls["zbzd"] as DropDownSearch).Text = i.ZBZD;
+                        }
+                    }
+                    DataScriptCurrentModel = model;
+                };
+                ToolStripMenuItem Delete = new ToolStripMenuItem();
+                Delete.Text = "删除";
+                Delete.Tag = item;
+                Delete.Click += (sender, e) =>
+                {
+                    ((sender as ToolStripMenuItem).Tag as DataScriptModel).Delete();
+                    LoadJbTs();
+                };
+                toolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { Edit, Delete });
+                this.tsddb_DataScript.DropDownItems.Add(toolStripMenuItem);
+            }
+        }
+        private void ts_AddDataJb_Click(object sender, EventArgs e)
+        {
+            if (tcl_tabList.SelectedTab.Name == tbp_DataScript.Name)
+            {
+                DataScriptCurrentModel = new DataScriptModel();
+                CbConfigClear();
+            }
+        }
+
+        #endregion 数据脚本配置
 
         #endregion Tool栏db配置加载
-
-        /// <summary>
-        /// 关闭程序时保存所有数据
-        /// </summary>
-        private void MIntercross_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            FileModelBase.Save();
-        }
-        /// <summary>
-        /// DB服务器变化出触发
-        /// </summary>
-        private void cbo_dbset_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                DBInfoModel model = (DBInfoModel)cbo_dbset.SelectedItem;
-                string def_DB = model.def_DB;
-                DBInfo.SetConnectionString(model);
-                var dbList = DBInfo.GetDBsInfo();
-                if (dbList != null)
-                {
-                    cbo_db.ValueMember = "name";
-                    cbo_db.DisplayMember = "name";
-                    cbo_db.DataSource = dbList;
-                    cbo_db.SelectedValue = def_DB;
-                }
-                else
-                {
-                    MessageBox.Show("连接失败!");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("连接失败!");
-            }
-        }
-        /// <summary>
-        /// 数据库变化时触发
-        /// </summary>
-        private void cbo_db_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataRowView model = (DataRowView)cbo_db.SelectedItem;
-            DBInfoModel dbInfo = (DBInfoModel)cbo_dbset.SelectedItem;
-            if (model != null)
-            {
-                dbInfo.def_DB = model[0].ToString();
-                dbInfo.AddOrUpdate();
-                DBInfo.SetConnectionString(dbInfo);
-                if (tcl_tabList.SelectedTab.Name == tbp_Create.Name)
-                {
-                    LoadCreate(dbInfo);
-                }
-                else
-                {
-                    LoadDataJb(dbInfo);
-                }
-            }
-        }
-        /// <summary>
-        /// 保存路径选择
-        /// </summary>
-        private void btn_Path_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.Description = "请选择保存的文件夹";
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                if (string.IsNullOrEmpty(dialog.SelectedPath))
-                {
-                    MessageBox.Show(this, "文件夹路径不能为空", "提示");
-                    return;
-                }
-                if (tcl_tabList.SelectedTab.Name == tbp_Create.Name)
-                {
-                    txt_Path.Text = dialog.SelectedPath.ConvertString();
-                }
-                else
-                {
-                    txt_CPath.Text = dialog.SelectedPath;
-                }
-            }
-        }
 
         #region 建表
         /// <summary>
         /// 加载面板
         /// </summary>
-        private void LoadCreate(DBInfoModel model)
+        private void LoadCreate(DBConfigModel model)
         {
             var dbTable = DBInfo.GetTablesInfo(model.def_DB);
             dgv_TablesDataSource(dbTable);
@@ -187,7 +282,6 @@ namespace FDBIntercross
                 dt.Rows.Clear();
                 dgv_Column.DataSource = dt;
             }
-            txt_Path.Text = SavePathModel.F_DBInfo.Path;
         }
         private void dgv_TablesDataSource(DataTable dbTable, string str = "")
         {
@@ -216,8 +310,6 @@ namespace FDBIntercross
                 else
                 {
                     dgv_Tables.ReadOnly = false;
-                    //dgv_Tables.Rows[0].Cells["name"].ReadOnly = false;
-                    //dgv_Tables.Columns["name"].ReadOnly = false;
                     dgv_Tables.Columns["name"].DefaultCellStyle.BackColor = Color.White;
                     DataGridViewCell cell = dgv_Tables.Rows[0].Cells["name"];
                     dgv_Tables.CurrentCell = cell;
@@ -244,8 +336,10 @@ namespace FDBIntercross
                 dgv_Column.DataSource = DBInfo.GetTableInfo_DT(name);
             }
         }
-
-        private void btn_Generate_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 生成脚本
+        /// </summary>
+        private void TableScript_Generate()
         {
             try
             {
@@ -257,15 +351,7 @@ namespace FDBIntercross
                         list.Add(item.Cells[1].Value.ConvertString());
                     }
                 }
-                string path = txt_Path.Text.ConvertString();
-                if (string.IsNullOrEmpty(path))
-                {
-                    MessageBox.Show("路径不能为空");
-                }
-                CreateTableLogic.CreateTableSql(list, path);
-                SavePathModel savePathModel = new SavePathModel();
-                savePathModel.Path = path;
-                savePathModel.AddOrUpdate();
+                TableScriptLogic.CreateTableSql(list, ts_ts_IsToUpper.Checked);
                 MessageBox.Show("生成成功");
             }
             catch (Exception ex)
@@ -324,14 +410,17 @@ namespace FDBIntercross
         #endregion 建表
 
         #region 数据脚本
-        private void LoadDataJb(DBInfoModel model)
+        /// <summary>
+        /// 当前处于活动的model
+        /// </summary>
+        private DataScriptModel DataScriptCurrentModel { get; set; } = new DataScriptModel();
+        private void LoadDataJb(DBConfigModel model)
         {
             var dbTable = DBInfo.GetTablesInfo(model.def_DB);
-            ComboBoxDataSource(cbx_TableList, dbTable, "name", isBind: true);
-            cbx_ConfigDataSource();
-            pl_CbConfigClear();
+            cbx_TableList.SetDataSource(dbTable, "name");
+            CbConfigClear();
         }
-        private object tempData = null;
+        private DataTable tempData = null;
         private Panel StructureControl()
         {
             var tag = pl_CbConfig.Tag.ConvertInt32();
@@ -368,9 +457,9 @@ namespace FDBIntercross
             {
                 tempData = (cbx_TableList.DataSource as DataTable).Select($" name<>'{cbx_TableList.Text.ConvertString()}'").CopyToDataTable();
             }
-            ComboBoxDataSource(table, tempData, "name", isBind: true);
-            ComboBoxDataSource(cbzd, DBInfo.GetTableInfo_DT(table.Text.ConvertString()), "COLUMN_NAME", isBind: true);
-            ComboBoxDataSource(zbzd, cbx_TablePk.DataSource, "COLUMN_NAME", isBind: true);
+            table.SetDataSource(tempData, "name");
+            cbzd.SetDataSource(DBInfo.GetTableInfo_DT(table.Text.ConvertString()), "COLUMN_NAME");
+            zbzd.SetDataSource(cbx_TablePk.DataSource, "COLUMN_NAME");
             return pl;
         }
         private void SelectedIndexChanged(object sender, EventArgs e)
@@ -390,7 +479,7 @@ namespace FDBIntercross
                 }
                 if (cbc_kz != null)
                 {
-                    ComboBoxDataSource(cbc_kz, data, "COLUMN_NAME", isBind: true);
+                    cbc_kz.SetDataSource(data, "COLUMN_NAME");
                     if (string.IsNullOrEmpty(cbc_kz.Text))
                     {
                         var key = data.Select(" IsKey=1");
@@ -402,31 +491,36 @@ namespace FDBIntercross
                 }
                 if (cbx.Name == cbx_TableList.Name)
                 {
-                    tempData = (cbx_TableList.Tag as DataTable).Select($" name<>'{cbx_TableList.Text.ConvertString()}'").CopyToDataTable();
+                    tempData = cbx_TableList.DataSource.Select($" name<>'{cbx_TableList.Text.ConvertString()}'").CopyToDataTable();
                     foreach (var item in pl_CbConfig.Controls)
                     {
                         if (item is Panel)
                         {
                             var _temp = (item as Panel).Controls["zbzd"] as DropDownSearch;
-                            ComboBoxDataSource(_temp, data, "COLUMN_NAME", isBind: true);
+                            _temp.SetDataSource(data, "COLUMN_NAME");
                             _temp.Text = cbx.Text;
                             var _temp2 = (item as Panel).Controls["table"] as DropDownSearch;
-                            _temp2.DataSource = tempData;
+                            _temp2.SetDataSource(tempData, "name");
                         }
                     }
                 }
             }
         }
 
-        private void pl_CbConfigClear()
+        private void CbConfigClear()
         {
-            foreach (Control item in pl_CbConfig.Controls)
+            for (int i = pl_CbConfig.Controls.Count - 1; i >= 0; i--)
             {
+                var item = pl_CbConfig.Controls[i];
                 if (item is Panel)
                 {
                     pl_CbConfig.Controls.Remove(item);
                 }
             }
+            pl_CbConfig.Tag = 0;
+            txt_DbSql.Text = string.Empty;
+            cbx_TableList.Text = string.Empty;
+            cbx_TablePk.Text = string.Empty;
         }
         private void DeleteCbPz(object sender, EventArgs e)
         {
@@ -436,9 +530,8 @@ namespace FDBIntercross
             pl_CbConfig.Controls.RemoveByKey(btn.Parent.Name);
             foreach (var item in pl_CbConfig.Controls)
             {
-                if (item is Panel)
+                if (item is Panel pl)
                 {
-                    var pl = (Panel)item;
                     var index = pl.Name.ConvertInt32();
                     if (index > tag)
                     {
@@ -456,26 +549,31 @@ namespace FDBIntercross
         {
             StructureControl();
         }
-        private void btn_GenerateData_Click(object sender, EventArgs e)
+
+        /// <summary>
+        /// 生成脚本
+        /// </summary>
+        private void DataScript_Generate()
         {
             try
             {
-                DataConfigModel model = cbx_Config.SelectedItem as DataConfigModel;
+                DataScriptModel model = DataScriptCurrentModel;
                 model.CbInfo = new List<DataConfig_CbModel>();
-                model.Path = txt_CPath.Text.ConvertString();
-                model.IsPcZzl = ckb_IsPcZzl.Checked;
                 model.ZTableName = cbx_TableList.Text.ConvertString();
                 model.ZTablePk = cbx_TablePk.Text.ConvertString();
                 model.Sql = txt_DbSql.Text.ConvertString();
-                if (!ckb_IsName.Checked)
+                if (!ts_ds_IsTName.Checked)
                 {
                     SetName sName = new SetName();
-                    sName.TName = model.Name == "--新增配置--" ? "" : model.Name;
+                    sName.TValue = model.Name;
                     if (sName.ShowDialog() == DialogResult.OK)
                     {
-                        model.Name = sName.TName.ConvertString();
+                        model.Name = sName.TValue.ConvertString();
                     }
-                    sName.Activate();
+                    else
+                    {
+                        return;
+                    }
                 }
                 else
                 {
@@ -494,12 +592,8 @@ namespace FDBIntercross
                         });
                     }
                 }
-                GenerateDataLogic.GenerateData(model);
+                DataScriptLogic.GenerateData(model, ts_ds_IsPcZzl.Checked, ts_ds_OneFiled.Checked);
                 model.AddOrUpdate();
-                string tempText = cbx_Config.Text.ConvertString();
-                cbx_ConfigDataSource();
-                pl_CbConfigClear();
-                cbx_Config.SelectedValue = tempText;
                 MessageBox.Show("生成成功");
             }
             catch (Exception ex)
@@ -507,87 +601,11 @@ namespace FDBIntercross
                 MessageBox.Show("生成失败");
             }
         }
-        private void cbx_ConfigDataSource()
-        {
-            var list = DataConfigModel.F_DBInfo;
-            list.Insert(0, new DataConfigModel() { Name = "--新增配置--" });
-            cbx_Config.ValueMember = "Name";
-            cbx_Config.DisplayMember = "Name";
-            cbx_Config.DataSource = list;
-        }
-        private void cbx_Config_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var model = cbx_Config.SelectedItem as DataConfigModel;
-            txt_CPath.Text = model.Path;
-            ckb_IsPcZzl.Checked = model.IsPcZzl;
-            cbx_TableList.Text = model.ZTableName;
-            cbx_TablePk.Text = model.ZTablePk;
-            txt_DbSql.Text = model.Sql;
-            if (model.CbInfo != null && model.CbInfo.Count > 0)
-            {
-                pl_CbConfigClear();
-                pl_CbConfig.Tag = 0;
-                foreach (var item in model.CbInfo)
-                {
-                    var pl = StructureControl();
-                    (pl.Controls["table"] as DropDownSearch).Text = item.TableName;
-                    (pl.Controls["cbzd"] as DropDownSearch).Text = item.CBZD;
-                    (pl.Controls["zbzd"] as DropDownSearch).Text = item.ZBZD;
-                }
-            }
-        }
-        #endregion 数据脚本
-
-        #region 构建搜索类型下拉框
-        public void ComboBoxDataSource(DropDownSearch cbx, object data, string ValueMember, string DisplayMember = "", bool isBind = false)
-        {
-            if (cbx != null)
-            {
-                cbx.ValueMember = ValueMember;
-                cbx.DisplayMember = string.IsNullOrEmpty(DisplayMember) ? ValueMember : DisplayMember;
-                cbx.Tag = data;
-                cbx.DataSource = data;
-                if (isBind)
-                {
-                    cbx.KeyUp -= new KeyEventHandler(cbo_db_KeyUp);
-                    cbx.KeyUp += new KeyEventHandler(cbo_db_KeyUp);
-                }
-            }
-        }
-
-        private void cbo_db_KeyUp(object sender, KeyEventArgs e)
-        {
-            var cbx = (DropDownSearch)sender;
-            var text = cbx.Text.ConvertString();
-            if (!string.IsNullOrEmpty(text))
-            {
-                string name = cbx.ValueMember;
-                var dt = (DataTable)cbx.Tag;
-                var temp = (cbx.DataSource as DataTable);
-                var dr = dt.Select($" {name} like '%{cbx.Text.ConvertString()}%'");
-                if (dr.Length > 0)
-                {
-                    //temp = dr.CopyToDataTable();
-                    cbx.DataSource = dr.CopyToDataTable();
-                }
-                else
-                {
-                    //temp = dt.Clone();
-                    cbx.DataSource = dt.Clone();
-                }
-                cbx.DroppedDown = true;
-                // cbx.Text = text;
-            }
-            else
-            {
-                cbx.DataSource = (DataTable)cbx.Tag;
-            }
-        }
-        #endregion 构建搜索类型下拉框
-
         private void tcl_tabList_SelectedIndexChanged(object sender, EventArgs e)
         {
             cbo_db_SelectedIndexChanged(null, null);
         }
+        #endregion 数据脚本
+
     }
 }

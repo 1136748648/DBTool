@@ -2,7 +2,7 @@
 
 namespace DBLogic.Model
 {
-    public class DBInfoModel : FileModelBase<List<DBInfoModel>>
+    public class DBConfigModel : FileBaseModel<List<DBConfigModel>>
     {
         public string Ip { get; set; }
         public string User { get; set; }

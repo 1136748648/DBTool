@@ -7,14 +7,14 @@ namespace FDBIntercross
 {
     public partial class DBConfig : Form
     {
-        private DBInfoModel dBInfoModel = null;
+        private DBConfigModel dBInfoModel = null;
         private bool isUpdate = false;
         public DBConfig()
         {
             InitializeComponent();
-            dBInfoModel = new DBInfoModel();
+            dBInfoModel = new DBConfigModel();
         }
-        public void SetUpdate(DBInfoModel _dBInfoModel)
+        public void SetUpdate(DBConfigModel _dBInfoModel)
         {
             isUpdate = true;
             dBInfoModel = _dBInfoModel;
@@ -47,7 +47,7 @@ namespace FDBIntercross
                 MessageBox.Show("连接失败!");
             }
         }
-        private DBInfoModel GetModelInfo()
+        private DBConfigModel GetModelInfo()
         {
             dBInfoModel.Ip = this.txb_Ip.Text.Trim();
             dBInfoModel.User = this.txb_User.Text.Trim();
