@@ -53,7 +53,7 @@ namespace DBLogic.Logic
                         string isNull = dr["IS_NULLABLE"].ConvertBoolean() ? "" : "not null";
                         string type = dr["DATA_TYPE"].ConvertString();
                         string _default = dr["COLUMN_DEFAULT"].ConvertString();
-                        _default = string.IsNullOrEmpty(_default) ? "" : $"default '{_default}'";
+                        _default = string.IsNullOrEmpty(_default) ? "" : $"default {_default}";
                         str1.AppendLine($"	{name} {type} {identity} {isNull} {_default},");
                         if (dr["IsKey"].ConvertBoolean())
                         {
