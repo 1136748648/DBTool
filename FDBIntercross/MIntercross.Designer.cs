@@ -28,12 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MIntercross));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsddb_DBSet = new System.Windows.Forms.ToolStripDropDownButton();
             this.ts_Add = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsddb_TableScript = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ts_ts_IsToUpper = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsddb_DataScript = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ts_ds_IsPcZzl = new System.Windows.Forms.ToolStripMenuItem();
+            this.ts_ds_IsTName = new System.Windows.Forms.ToolStripMenuItem();
+            this.ts_ds_OneFiled = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.ts_ds_AddDataJb = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ts_SetPath = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cbo_db = new System.Windows.Forms.ComboBox();
@@ -67,16 +77,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.btn_GenerateData = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.tsddb_DataScript = new System.Windows.Forms.ToolStripDropDownButton();
-            this.ts_ds_IsPcZzl = new System.Windows.Forms.ToolStripMenuItem();
-            this.ts_ds_IsTName = new System.Windows.Forms.ToolStripMenuItem();
-            this.ts_ds_OneFiled = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.ts_ds_AddDataJb = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsddb_TableScript = new System.Windows.Forms.ToolStripDropDownButton();
-            this.ts_ts_IsToUpper = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.ts_SetPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tcl_tabList.SuspendLayout();
             this.tbp_TableScript.SuspendLayout();
@@ -119,7 +119,7 @@
             // ts_Add
             // 
             this.ts_Add.Name = "ts_Add";
-            this.ts_Add.Size = new System.Drawing.Size(180, 22);
+            this.ts_Add.Size = new System.Drawing.Size(124, 22);
             this.ts_Add.Tag = "default";
             this.ts_Add.Text = "新增配置";
             this.ts_Add.Click += new System.EventHandler(this.ts_Add_Click);
@@ -127,8 +127,94 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
             this.toolStripSeparator1.Tag = "default";
+            // 
+            // tsddb_TableScript
+            // 
+            this.tsddb_TableScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsddb_TableScript.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ts_ts_IsToUpper});
+            this.tsddb_TableScript.Image = ((System.Drawing.Image)(resources.GetObject("tsddb_TableScript.Image")));
+            this.tsddb_TableScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsddb_TableScript.Name = "tsddb_TableScript";
+            this.tsddb_TableScript.Size = new System.Drawing.Size(81, 22);
+            this.tsddb_TableScript.Text = "表脚本配置";
+            // 
+            // ts_ts_IsToUpper
+            // 
+            this.ts_ts_IsToUpper.CheckOnClick = true;
+            this.ts_ts_IsToUpper.Name = "ts_ts_IsToUpper";
+            this.ts_ts_IsToUpper.Size = new System.Drawing.Size(160, 22);
+            this.ts_ts_IsToUpper.Text = "列名称是否大写";
+            // 
+            // tsddb_DataScript
+            // 
+            this.tsddb_DataScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsddb_DataScript.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ts_ds_IsPcZzl,
+            this.ts_ds_IsTName,
+            this.ts_ds_OneFiled,
+            this.toolStripSeparator2,
+            this.ts_ds_AddDataJb});
+            this.tsddb_DataScript.Image = ((System.Drawing.Image)(resources.GetObject("tsddb_DataScript.Image")));
+            this.tsddb_DataScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsddb_DataScript.Name = "tsddb_DataScript";
+            this.tsddb_DataScript.Size = new System.Drawing.Size(93, 22);
+            this.tsddb_DataScript.Text = "数据脚本配置";
+            // 
+            // ts_ds_IsPcZzl
+            // 
+            this.ts_ds_IsPcZzl.CheckOnClick = true;
+            this.ts_ds_IsPcZzl.Name = "ts_ds_IsPcZzl";
+            this.ts_ds_IsPcZzl.Size = new System.Drawing.Size(148, 22);
+            this.ts_ds_IsPcZzl.Text = "排除自增列";
+            // 
+            // ts_ds_IsTName
+            // 
+            this.ts_ds_IsTName.CheckOnClick = true;
+            this.ts_ds_IsTName.Name = "ts_ds_IsTName";
+            this.ts_ds_IsTName.Size = new System.Drawing.Size(148, 22);
+            this.ts_ds_IsTName.Text = "表名为文件名";
+            // 
+            // ts_ds_OneFiled
+            // 
+            this.ts_ds_OneFiled.Checked = true;
+            this.ts_ds_OneFiled.CheckOnClick = true;
+            this.ts_ds_OneFiled.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ts_ds_OneFiled.Name = "ts_ds_OneFiled";
+            this.ts_ds_OneFiled.Size = new System.Drawing.Size(148, 22);
+            this.ts_ds_OneFiled.Text = "生成一个文件";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(145, 6);
+            // 
+            // ts_ds_AddDataJb
+            // 
+            this.ts_ds_AddDataJb.Name = "ts_ds_AddDataJb";
+            this.ts_ds_AddDataJb.Size = new System.Drawing.Size(148, 22);
+            this.ts_ds_AddDataJb.Text = "新建数据脚本";
+            this.ts_ds_AddDataJb.Click += new System.EventHandler(this.ts_AddDataJb_Click);
+            // 
+            // toolStripSplitButton3
+            // 
+            this.toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripSplitButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ts_SetPath});
+            this.toolStripSplitButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton3.Image")));
+            this.toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton3.Name = "toolStripSplitButton3";
+            this.toolStripSplitButton3.Size = new System.Drawing.Size(69, 22);
+            this.toolStripSplitButton3.Text = "系统配置";
+            // 
+            // ts_SetPath
+            // 
+            this.ts_SetPath.Name = "ts_SetPath";
+            this.ts_SetPath.Size = new System.Drawing.Size(148, 22);
+            this.ts_SetPath.Text = "文件保存路径";
+            this.ts_SetPath.Click += new System.EventHandler(this.ts_SetPath_Click);
             // 
             // label1
             // 
@@ -212,13 +298,13 @@
             this.dgv_Tables.AllowUserToAddRows = false;
             this.dgv_Tables.AllowUserToDeleteRows = false;
             this.dgv_Tables.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.dgv_Tables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.dgv_Tables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_Tables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_Tables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsSelection,
@@ -487,92 +573,6 @@
             this.btn_GenerateData.UseVisualStyleBackColor = true;
             this.btn_GenerateData.Click += new System.EventHandler(this.btn_GenerateData_Click);
             // 
-            // tsddb_DataScript
-            // 
-            this.tsddb_DataScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsddb_DataScript.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ts_ds_IsPcZzl,
-            this.ts_ds_IsTName,
-            this.ts_ds_OneFiled,
-            this.toolStripSeparator2,
-            this.ts_ds_AddDataJb});
-            this.tsddb_DataScript.Image = ((System.Drawing.Image)(resources.GetObject("tsddb_DataScript.Image")));
-            this.tsddb_DataScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsddb_DataScript.Name = "tsddb_DataScript";
-            this.tsddb_DataScript.Size = new System.Drawing.Size(93, 22);
-            this.tsddb_DataScript.Text = "数据脚本配置";
-            // 
-            // ts_ds_IsPcZzl
-            // 
-            this.ts_ds_IsPcZzl.CheckOnClick = true;
-            this.ts_ds_IsPcZzl.Name = "ts_ds_IsPcZzl";
-            this.ts_ds_IsPcZzl.Size = new System.Drawing.Size(180, 22);
-            this.ts_ds_IsPcZzl.Text = "排除自增列";
-            // 
-            // ts_ds_IsTName
-            // 
-            this.ts_ds_IsTName.CheckOnClick = true;
-            this.ts_ds_IsTName.Name = "ts_ds_IsTName";
-            this.ts_ds_IsTName.Size = new System.Drawing.Size(180, 22);
-            this.ts_ds_IsTName.Text = "表名为文件名";
-            // 
-            // ts_ds_OneFiled
-            // 
-            this.ts_ds_OneFiled.Checked = true;
-            this.ts_ds_OneFiled.CheckOnClick = true;
-            this.ts_ds_OneFiled.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ts_ds_OneFiled.Name = "ts_ds_OneFiled";
-            this.ts_ds_OneFiled.Size = new System.Drawing.Size(180, 22);
-            this.ts_ds_OneFiled.Text = "生成一个文件";
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
-            // 
-            // ts_ds_AddDataJb
-            // 
-            this.ts_ds_AddDataJb.Name = "ts_ds_AddDataJb";
-            this.ts_ds_AddDataJb.Size = new System.Drawing.Size(180, 22);
-            this.ts_ds_AddDataJb.Text = "新建数据脚本";
-            this.ts_ds_AddDataJb.Click += new System.EventHandler(this.ts_AddDataJb_Click);
-            // 
-            // tsddb_TableScript
-            // 
-            this.tsddb_TableScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsddb_TableScript.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ts_ts_IsToUpper});
-            this.tsddb_TableScript.Image = ((System.Drawing.Image)(resources.GetObject("tsddb_TableScript.Image")));
-            this.tsddb_TableScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsddb_TableScript.Name = "tsddb_TableScript";
-            this.tsddb_TableScript.Size = new System.Drawing.Size(81, 22);
-            this.tsddb_TableScript.Text = "表脚本配置";
-            // 
-            // ts_ts_IsToUpper
-            // 
-            this.ts_ts_IsToUpper.CheckOnClick = true;
-            this.ts_ts_IsToUpper.Name = "ts_ts_IsToUpper";
-            this.ts_ts_IsToUpper.Size = new System.Drawing.Size(180, 22);
-            this.ts_ts_IsToUpper.Text = "列名称是否大写";
-            // 
-            // toolStripSplitButton3
-            // 
-            this.toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripSplitButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ts_SetPath});
-            this.toolStripSplitButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton3.Image")));
-            this.toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSplitButton3.Name = "toolStripSplitButton3";
-            this.toolStripSplitButton3.Size = new System.Drawing.Size(69, 22);
-            this.toolStripSplitButton3.Text = "系统配置";
-            // 
-            // ts_SetPath
-            // 
-            this.ts_SetPath.Name = "ts_SetPath";
-            this.ts_SetPath.Size = new System.Drawing.Size(180, 22);
-            this.ts_SetPath.Text = "文件保存路径";
-            this.ts_SetPath.Click += new System.EventHandler(this.ts_SetPath_Click);
-            // 
             // MIntercross
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -586,6 +586,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MIntercross";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
